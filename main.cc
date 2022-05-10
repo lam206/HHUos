@@ -7,26 +7,27 @@
  *                  nachdem dieser in den Protected Mode geschaltet hat und  *
  *                  die GDT und IDT initalisiert hat.                        *
  *                                                                           *
- * Autor:           Michael Schoettner, HHU, 11.11.2016                      *
+ * Autor:           Michael Schoettner, HHU, 15.8.2016                       *
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "kernel/Allocator.h"
-#include "user/HeapDemo.h"
 
 
 int main() {
-   
+    
     // Speicherverwaltung initialisieren
     allocator.init();
 
     // Bildschirm loeschen.
-    kout.clear();
     
-    // Startmeldung ausgeben
-
-    heap_demo();
-
-    while (1);
+    // Tastatur-Unterbrechungsroutine 'einstoepseln'
+    /* hier muss Code eingefuegt werden */
+    
+    // Interrupts erlauben (Tastatur)
+    /* hier muss Code eingefuegt werden */
+  
+    key_irq_demo();
+  
+    while (1) ; // wir kehren nicht zum Bootlader zurueck
     return 0;
  }
