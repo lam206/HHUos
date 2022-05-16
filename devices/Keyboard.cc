@@ -9,6 +9,7 @@
  *****************************************************************************/
 
 #include "devices/Keyboard.h"
+#include "kernel/Globals.h"
 
 /* Tabellen fuer ASCII-Codes (Klassenvariablen) intiialisieren */
 
@@ -292,26 +293,6 @@ Key Keyboard::key_hit () {
 		return invalid;
 	}
 
-
-    // solution
-
-/*    int control;
-
-    // warten bis ein Byte abholbereit ist
-    do {
-        control = ctrl_port.inb ();
-    } while ((control & outb) == 0);
-    // Byte einlesen
-    code = (unsigned char) data_port.inb ();
-    
-    // Auch eine evtl. angeschlossene PS/2 Maus liefert ihre Daten ueber den
-    // Tastaturcontroller. In diesem Fall ist zur Kennzeichnung das AUXB-Bit
-    // gesetzt.
-    if (!(control & auxb) && key_decoded ())
-        return gather;
-    
-return invalid;*/
-
 }
 
 
@@ -351,17 +332,6 @@ void Keyboard::reboot () {
 void Keyboard::set_repeat_rate (int speed, int delay) {
 
     /* Hier muss Code eingefuegt werden. */
-	/*if (speed > 31 || delay > 3) {
-		return;
-	}
-	unsigned char target_byte = ((delay & 3) << 5) | (speed & 31);
-	while (true) {
-		unsigned char status = ctrl_port.inb();  // Statusregister		
-		if (!(status & inpb)) {  // if input bit not set (tastatur controller hat abgeholt)
-			data_port.outb(target_byte);
-			return;
-		}
-	}*/
 
 	// solution
 	int status, reply;
@@ -399,4 +369,46 @@ void Keyboard::set_led (char led, bool on) {
 
     /* Hier muss Code eingefuegt werden. */
 
+}
+
+
+void Keyboard::plugin() {
+	intdis.assign(intdis.keyboard, *this);
+	pic.allow(pic.keyboard);
+}
+
+void Keyboard::trigger() {
+	//kout.setpos(0, 10); this is just for user/SyncDemo.h
+	Key pressed = key_hit_nonblocking();
+	if (pressed.valid()) {
+		kout << pressed.ascii();
+		kout.flush();
+	}
+
+}
+
+
+Key Keyboard::key_hit_nonblocking() {
+
+    Key invalid;  // nicht explizit initialisierte Tasten sind ungueltig
+         
+    /* Hier muss Code eingefuegt werden. */
+    unsigned char status;
+
+    status = ctrl_port.inb();
+	if (!(status & Keyboard::outb)) {
+		return invalid;
+	}
+
+	code = (unsigned char) data_port.inb(); // get the valid, readable byte from keyboard controller's output buffer
+	if (!(status & auxb)) {  // check, again with status register, if the data byte is from keyboard really
+			bool flag = key_decoded();
+			if (flag) {
+				return gather;
+			} else {
+				return invalid;
+			}
+	} else {
+		return invalid;
+	}
 }

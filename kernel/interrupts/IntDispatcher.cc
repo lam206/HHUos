@@ -32,9 +32,18 @@ extern "C" void int_disp (unsigned int slot);
  *****************************************************************************/
 void int_disp (unsigned int vector) {
 
+	// kout << "int_disp got hit with vector: " << vector << endl;
+
     /* hier muss Code eingefuegt werden */
     
-    kout << "Ein Interrupt ist aufgetreten" << slot << endl;
+    int retval = intdis.report(vector);
+    if (retval == -1) {
+		kout << "unknown interrupt. rebooting ..." << endl;
+		for (int i = 0; i < 10000; i++) {
+			// wait
+		}
+		kb.reboot();
+	}
 
 }
 
@@ -64,6 +73,8 @@ IntDispatcher::IntDispatcher () {
 int IntDispatcher::assign (unsigned int vector, ISR& isr) {
 
     /* hier muss Code eingefuegt werden */
+	map[vector] = &isr;
+	return 0;
 
 }
 
@@ -81,5 +92,12 @@ int IntDispatcher::assign (unsigned int vector, ISR& isr) {
 int IntDispatcher::report (unsigned int vector) {
 
     /* hier muss Code eingefuegt werden */
+	if (map[vector] != 0) {
+		map[vector]->trigger();
+		return 0;
+	} else {
+		return -1;
+	}
+
 
 }

@@ -87,6 +87,9 @@ public:
     
    // Unterbrechnungsroutine der Tastatur.
    void trigger ();
+
+   // non-blocking version of key_hit
+   Key key_hit_nonblocking();
 };
 
 #endif

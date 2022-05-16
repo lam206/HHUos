@@ -11,6 +11,8 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
+#include "user/KeyIRQDemo.h"
+#include "user/SyncDemo.h"
 
 
 int main() {
@@ -19,14 +21,18 @@ int main() {
     allocator.init();
 
     // Bildschirm loeschen.
+    kout.clear();
     
     // Tastatur-Unterbrechungsroutine 'einstoepseln'
     /* hier muss Code eingefuegt werden */
+	kb.plugin();
     
     // Interrupts erlauben (Tastatur)
     /* hier muss Code eingefuegt werden */
+	cpu.enable_int();
   
     key_irq_demo();
+
   
     while (1) ; // wir kehren nicht zum Bootlader zurueck
     return 0;
