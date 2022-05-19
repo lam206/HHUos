@@ -31,4 +31,14 @@ void CoroutineDemo::main () {
      *
      */
 
+	CoroutineLoop app1((unsigned int*)stack[0], 0);
+	CoroutineLoop app2((unsigned int*)stack[1], 1);
+	CoroutineLoop app3((unsigned int*)stack[2], 2);
+
+	app1.setNext((Chain*)&app2);
+	app2.setNext((Chain*)&app3);
+	app3.setNext((Chain*)&app1);
+
+	app1.start();
+
 }

@@ -115,6 +115,7 @@ Coroutine::Coroutine (unsigned int* stack) {
 void Coroutine::switchToNext () {
 
     /* hier muss Code eingefügt werden */
+	Coroutine_switch(&this->regs, &(((Coroutine*)next)->regs));
 
 }
 
@@ -127,17 +128,19 @@ void Coroutine::switchToNext () {
 void Coroutine::start () {
     
     /* hier muss Code eingefügt werden */
+	Coroutine_start(&regs);
     
 }
 
 
 /*****************************************************************************
- * Methode:         Coroutine::start                                         *
+ * Methode:         Coroutine::setNext                                       *
  *---------------------------------------------------------------------------*
  * Beschreibung:    Verweis auf nächste Koroutine setzen.                    *
  *****************************************************************************/
 void Coroutine::setNext (Chain* next) {
 
     /* hier muss Code eingefügt werden */
+	this->next = next;
 
 }
