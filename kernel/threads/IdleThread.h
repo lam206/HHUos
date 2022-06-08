@@ -26,6 +26,7 @@ public:
     
     void run () {
         while (1) {
+		kout << "Hey stop! I want to be idle!" << endl;
             scheduler.yield ();
         }
     }

@@ -20,4 +20,5 @@ PIC                   pic;        // Interrupt-Controller
 unsigned int          total_mem;  // RAM total
 BumpAllocator         allocator;       
 //LinkedListAllocator   allocator;       
+Scheduler 	      scheduler;
 

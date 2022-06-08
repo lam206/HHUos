@@ -11,10 +11,10 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "user/CoroutineDemo.h"
+#include "user/threads/ThreadDemo.h"
 
 
-CoroutineDemo coroutineDemo;
+ThreadDemo threadDemo;
 
 
 int main() {
@@ -24,14 +24,6 @@ int main() {
     // Startmeldung ausgeben
     kout << "HHUos 0.4" << endl << "=========" << endl << endl;
     
-    kout << "Unterstuetzte Funktionen:" << endl;
-    kout << "   - Bildschirmausgaben" << endl;
-    kout << "   - Sound ueber den PC-Lautsprecher" << endl;
-    kout << "   - Tastatureingaben per Interrupt" << endl;
-    kout << "   - Koroutinen" << endl;
-    kout << endl;
-    kout.flush ();
-    
     // Tastatur-Unterbrechungsroutine einstoepseln
     kb.plugin ();
     
@@ -39,7 +31,7 @@ int main() {
     cpu.enable_int ();
     
     // Anwendungscode aufrufen
-    coroutineDemo.main();
+    threadDemo.main();
     
     return 0;
  }

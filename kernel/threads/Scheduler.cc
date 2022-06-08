@@ -26,6 +26,9 @@ void Scheduler::schedule () {
     /* Bevor diese Methode anufgerufen wird, muss zumindest der Idle-Thread 
      * in der Queue eingefuegt worden sein. 
      */
+
+	Thread* first_thread = (Thread*)this->readyQueue.dequeue();
+	this->start(*first_thread);
 }
 
 
@@ -40,6 +43,7 @@ void Scheduler::schedule () {
 void Scheduler::ready (Thread * that) {
 
     /* hier muss Code eingefuegt werden */
+	this->readyQueue.enqueue(that);
 
 }
 
@@ -55,6 +59,8 @@ void Scheduler::ready (Thread * that) {
 void Scheduler::exit () {
 
     /* hier muss Code eingefuegt werden */
+	Thread* t = (Thread*)this->readyQueue.dequeue();
+	this->dispatch(*t);
 
 }
 
@@ -73,6 +79,7 @@ void Scheduler::exit () {
 void Scheduler::kill (Thread * that) {
 
     /* hier muss Code eingefuegt werden */
+	this->readyQueue.remove(that);
 
 }
 
@@ -91,5 +98,9 @@ void Scheduler::kill (Thread * that) {
 void Scheduler::yield () {
 
     /* hier muss Code eingefuegt werden */
+	this->readyQueue.enqueue(this->get_active());
+	Thread* next = (Thread*)this->readyQueue.dequeue();
+	this->dispatch(*next);
+
 
 }

@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 #include "kernel/threads/Thread.h"
+#include "kernel/Globals.h"
 
 // Funktionen, die auf der Assembler-Ebene implementiert werden, muessen als
 // extern "C" deklariert werden, da sie nicht dem Name-Mangeling von C++
@@ -95,7 +96,7 @@ void kickoff (Thread* object) {
 
 
 /*****************************************************************************
- * Methode:         Thread::Thread                                     *
+ * Methode:         Thread::Thread                                           *
  *---------------------------------------------------------------------------*
  * Beschreibung:    Initialer Kontext einer Koroutine einrichten.            *
  *                                                                           *
@@ -105,9 +106,9 @@ void kickoff (Thread* object) {
 unsigned int tid_gen = 0;
 
 Thread::Thread () {
-	this.tid = tid_gen;
+	this->tid = tid_gen;
 	tid_gen++;
-	unsigned int *stack = alloc.allocate(4000);
+	unsigned int *stack = (unsigned int*)allocator.alloc(4000);
     Thread_init (&regs, stack, kickoff, this);
  }
 
@@ -120,7 +121,7 @@ Thread::Thread () {
 void Thread::switchTo (Thread& next) {
 
     /* hier muss Code eingefügt werden */
-	Thread_switch(&this->regs, &(((Thread*)next)->regs));
+	Thread_switch(&this->regs, &(next.regs));
 
 }
 

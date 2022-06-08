@@ -36,7 +36,7 @@ private:
 public:
     unsigned int tid;       // Thread-ID (wird im Konstruktor vergeben)
 
-    Thread () { }
+    Thread (); 
     
     // Thread aktivieren
     void start ();

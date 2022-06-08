@@ -18,6 +18,7 @@
 #include "devices/CGA_Stream.h"
 #include "devices/Keyboard.h"
 #include "kernel/interrupts/IntDispatcher.h"
+#include "kernel/threads/Scheduler.h"
 
 extern CPU                   cpu;        // CPU-spezifische Funktionen
 extern PCSPK                 pcspk;      // PC-Lautsprecher
@@ -28,5 +29,6 @@ extern PIC                   pic;        // Interrupt-Controller
 extern unsigned int          total_mem;  // RAM total
 extern BumpAllocator         allocator;       
 //extern LinkedListAllocator   allocator;       
+extern Scheduler 	    scheduler;
 
 #endif
