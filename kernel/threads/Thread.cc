@@ -102,17 +102,22 @@ void kickoff (Thread* object) {
  * Parameter:                                                                *
  *      stack       Stack für die neue Koroutine                             *
  *****************************************************************************/
-Thread::Thread (unsigned int* stack) {
+unsigned int tid_gen = 0;
+
+Thread::Thread () {
+	this.tid = tid_gen;
+	tid_gen++;
+	unsigned int *stack = alloc.allocate(4000);
     Thread_init (&regs, stack, kickoff, this);
  }
 
 
 /*****************************************************************************
- * Methode:         Thread::switchToNext                                    *
+ * Methode:         Thread::switchTo	                                     *
  *---------------------------------------------------------------------------*
  * Beschreibung:    Auf die nächste Koroutine umschalten.                    *
  *****************************************************************************/
-void Thread::switchToNext () {
+void Thread::switchTo (Thread& next) {
 
     /* hier muss Code eingefügt werden */
 	Thread_switch(&this->regs, &(((Thread*)next)->regs));
@@ -133,14 +138,3 @@ void Thread::start () {
 }
 
 
-/*****************************************************************************
- * Methode:         Thread::setNext                                       *
- *---------------------------------------------------------------------------*
- * Beschreibung:    Verweis auf nächste Koroutine setzen.                    *
- *****************************************************************************/
-void Thread::setNext (Chain* next) {
-
-    /* hier muss Code eingefügt werden */
-	this->next = next;
-
-}
