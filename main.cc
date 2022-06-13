@@ -13,6 +13,7 @@
 #include "kernel/Globals.h"
 #include "kernel/threads/IdleThread.h"
 #include "user/HelloWorldThread.h"
+#include "user/CoopThreadDemo.h"
 
 int main() {
     // Bildschirm loeschen.
@@ -28,10 +29,8 @@ int main() {
     cpu.enable_int ();
     
     // Anwendungscode aufrufen
-	IdleThread idle;
-	HelloWorldThread thread;
-	scheduler.ready(&idle);
-	scheduler.ready(&thread);
+    	CoopThreadDemo demo;
+	scheduler.ready(&demo);
 	scheduler.schedule();
 
     

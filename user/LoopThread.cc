@@ -18,5 +18,15 @@
 void LoopThread::run () {
    
    /* Hier muss Code eingefuegt werden */
+
+	int counter = 0;
+	while (1) {
+		kout.setpos(10+20*id, 10);
+		kout << "Thread" << id << ": " << counter;
+		kout.flush();
+		counter++;
+		scheduler.yield();
+	}
+
    
 }

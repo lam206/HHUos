@@ -121,9 +121,9 @@ Thread::Thread () {
 void Thread::switchTo (Thread& next) {
 
     /* hier muss Code eingefügt werden */
-	kout << "Thread::switchTo" << endl;
+	// kout << "Thread::switchTo" << endl;
 	//kout << "this: ";
-	kout << "&this->regs: " << &this->regs << ". &(next.regs): " << &(next.regs) << endl;
+	// kout << "&this->regs: " << &this->regs << ". &(next.regs): " << &(next.regs) << endl;
 	Thread_switch(&this->regs, &(next.regs));
 
 }

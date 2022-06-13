@@ -30,7 +30,7 @@ Chain* Queue::dequeue () {
 	if (newHead == 0) {
 		tail = &this->head;
 	}
-	oldHead.next = 0;  // Notion of next for a dequeued thing doesn't make sense. The element no longer has a next.
+	oldHead->next = 0;  // Notion of next for a dequeued thing doesn't make sense. The element no longer has a next.
 	return oldHead;
 
 }

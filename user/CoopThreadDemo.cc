@@ -22,5 +22,19 @@
 void CoopThreadDemo::run () {
   
     /* Hier muss Code eingefuegt werden */
+	LoopThread t0(0);
+	LoopThread t1(1);
+	LoopThread t2(2);
+
+	scheduler.ready(&t0);
+	scheduler.ready(&t1);
+	scheduler.ready(&t2);
+
+	for (int i = 0; i <= 1000; i++) {
+		scheduler.yield();
+	}
+
+	scheduler.kill(&t1);
+	scheduler.exit();
     
 }
