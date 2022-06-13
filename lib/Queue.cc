@@ -6,6 +6,11 @@ void Queue::enqueue (Chain* item) {  // don't need to check if empty or not
 	// have pointer to tail
 	// take tail next pointer and set that to item
 	
+	if (item->next != 0) {
+		kout << "A Queue's enqueue is for adding one element. Not an element with a tail. ((next pointer not zero)." << endl;
+		item->next = 0;
+	}
+	
 	*tail = item;	
 	tail = &item->next;
 }
@@ -25,6 +30,7 @@ Chain* Queue::dequeue () {
 	if (newHead == 0) {
 		tail = &this->head;
 	}
+	oldHead.next = 0;  // Notion of next for a dequeued thing doesn't make sense. The element no longer has a next.
 	return oldHead;
 
 }

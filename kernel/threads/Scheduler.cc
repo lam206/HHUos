@@ -98,7 +98,6 @@ void Scheduler::kill (Thread * that) {
 void Scheduler::yield () {
 
     /* hier muss Code eingefuegt werden */
-	kout << "Scheduler back in control" << endl;
 	this->readyQueue.enqueue(this->get_active());
 	Thread* next = (Thread*)this->readyQueue.dequeue();
 	this->dispatch(*next);

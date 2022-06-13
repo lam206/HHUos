@@ -12,14 +12,14 @@
 
 #include "kernel/Globals.h"
 #include "kernel/threads/IdleThread.h"
-
+#include "user/HelloWorldThread.h"
 
 int main() {
     // Bildschirm loeschen.
     kout.clear ();
     
     // Startmeldung ausgeben
-    kout << "HHUos 0.4" << endl << "=========" << endl << endl;
+    kout << "HHUos" << endl << "=========" << endl << endl;
     
     // Tastatur-Unterbrechungsroutine einstoepseln
     kb.plugin ();
@@ -29,8 +29,9 @@ int main() {
     
     // Anwendungscode aufrufen
 	IdleThread idle;
+	HelloWorldThread thread;
 	scheduler.ready(&idle);
-	kout << "original thread pointer: " << &idle << endl;
+	scheduler.ready(&thread);
 	scheduler.schedule();
 
     

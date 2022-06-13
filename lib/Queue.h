@@ -17,6 +17,8 @@
 * Autor:           Olaf Spinczyk, TU Dortmund                               *
 *****************************************************************************/
 
+// head == NULL when list is empty.
+
 #ifndef __Queue_include__
 #define __Queue_include__
 
