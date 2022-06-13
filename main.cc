@@ -11,10 +11,7 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "user/threads/ThreadDemo.h"
-
-
-ThreadDemo threadDemo;
+#include "kernel/threads/IdleThread.h"
 
 
 int main() {
@@ -31,7 +28,11 @@ int main() {
     cpu.enable_int ();
     
     // Anwendungscode aufrufen
-    threadDemo.main();
+	IdleThread idle;
+	scheduler.ready(&idle);
+	kout << "original thread pointer: " << &idle << endl;
+	scheduler.schedule();
+
     
     return 0;
  }

@@ -1,4 +1,5 @@
 #include "lib/Queue.h"
+#include "kernel/Globals.h"
 
 
 void Queue::enqueue (Chain* item) {  // don't need to check if empty or not
@@ -14,9 +15,16 @@ Chain* Queue::dequeue () {
 	// take head
 	// set head to next of head
 	
+	if (this->head == 0) {
+		kout << "Error. Queue is empty." << endl;
+		return 0;
+	}
 	Chain *newHead = this->head->next;
 	Chain *oldHead = this->head;
 	this->head = newHead;
+	if (newHead == 0) {
+		tail = &this->head;
+	}
 	return oldHead;
 
 }

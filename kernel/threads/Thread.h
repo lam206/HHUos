@@ -47,7 +47,7 @@ public:
     // Methode des Threads, muss in Sub-Klasse implementiert werden
     virtual void run () = 0;
 
-    ~Thread ();
+    ~Thread () {}
 
  };
 

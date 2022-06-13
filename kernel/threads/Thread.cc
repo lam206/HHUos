@@ -109,7 +109,7 @@ Thread::Thread () {
 	this->tid = tid_gen;
 	tid_gen++;
 	unsigned int *stack = (unsigned int*)allocator.alloc(4000);
-    Thread_init (&regs, stack, kickoff, this);
+    Thread_init (&regs, stack+4000, kickoff, this);
  }
 
 
@@ -121,6 +121,9 @@ Thread::Thread () {
 void Thread::switchTo (Thread& next) {
 
     /* hier muss Code eingefügt werden */
+	kout << "Thread::switchTo" << endl;
+	//kout << "this: ";
+	kout << "&this->regs: " << &this->regs << ". &(next.regs): " << &(next.regs) << endl;
 	Thread_switch(&this->regs, &(next.regs));
 
 }

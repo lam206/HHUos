@@ -15,6 +15,7 @@
  *****************************************************************************/
 
 #include "kernel/threads/Dispatch.h"
+#include "kernel/Globals.h"
 
 
 /*****************************************************************************
@@ -27,6 +28,7 @@
  *****************************************************************************/
 void Dispatcher::start (Thread& first) {
     if (!active) {
+	    kout << "Dispatcher::start" << endl;
         active = &first;
         active->start ();
     }
@@ -42,6 +44,7 @@ void Dispatcher::start (Thread& first) {
  *      next        Thread der die CPU erhalten soll.                        *
  *****************************************************************************/
 void Dispatcher::dispatch (Thread& next) {
+	kout << "Dispatcher::dispatch" << endl;
     Thread* current = active;
     active = &next;
     current->switchTo (next);
