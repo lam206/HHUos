@@ -11,6 +11,7 @@
 #include "kernel/Globals.h"
 #include "user/VBEdemo.h"
 #include "devices/fonts/Fonts.h"
+#include "lib/util.h"
 
 // Bitmap
 #include "bmp_hhu.cc"
@@ -68,6 +69,8 @@ void VBEdemo::drawBitmap () {
     unsigned char *sprite_pixel  = (unsigned char*)hhu.pixel_data;
 
     /* Hier muss Code eingefuegt werden */
+    vesa.drawSprite(sprite_height, sprite_width, sprite_bpp, sprite_pixel, 0, 0);
+	
 
 }
 
@@ -80,6 +83,10 @@ void VBEdemo::drawBitmap () {
 void VBEdemo::drawFonts () {
 
    /* Hier muss Code eingefuegt werden */
+
+	char *str = "wazzzzzup";
+	
+	vesa.drawString(std_font_8x16, 100, 100, vesa.palette(100, 0, 0), str, strlen(str));
    
 }
 
@@ -96,10 +103,10 @@ void VBEdemo::run () {
     vesa.initGraphicMode(MODE_640_480_24BITS);
     vesa.setDrawingBuff(BUFFER_VISIBLE);
 
-    drawColors();
     
     /* Hier muss Code eingefuegt werden */
-
+	vesa.drawRectangle(10, 10, 100, 100, vesa.palette(200, 200, 200));
+	vesa.drawCircle(50, 50, 20, vesa.palette(200, 200, 200));
     // selbst terminieren
     scheduler.exit ();
 }

@@ -34,7 +34,10 @@ private:
                             unsigned int width, unsigned int height, 
                             unsigned char* bitmap, unsigned int col);
 
+	unsigned int sqrt(unsigned int x) ;
+
 public:
+
     unsigned int xres, yres;        // Aufloesung in Pixel
     unsigned int bpp;               // Farbtiefe (Bits per Pixel)
     unsigned int lfb;               // Adresse des Linearen Framebuffers
@@ -43,12 +46,19 @@ public:
     
     LFBgraphics () { mode = BUFFER_VISIBLE; };
     
+    unsigned int palette(unsigned char r, unsigned char g, unsigned char b);
+
     void clear            ();
     void drawPixel        ( unsigned int x, unsigned int y, unsigned int col);
     
     void drawString       (Font &fnt, unsigned int x, unsigned int y,  
                             unsigned int col, char* str, unsigned int len);
     
+	void drawSprite(unsigned int sprite_height, unsigned int sprite_width, unsigned int sprite_bpp, unsigned char *sprite_pixel, unsigned int xstart, unsigned int ystart);
+
+	void drawRectangle(unsigned int xstart, unsigned int ystart, unsigned int height, unsigned int width, unsigned int col);
+	void drawCircle(int xCenter, int yCenter, int radius, unsigned int c);
+
     // stellt ein, ob in den sichtbaren Puffer gezeichnet wird
     void setDrawingBuff( int v);
     

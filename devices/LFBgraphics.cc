@@ -85,6 +85,11 @@ void LFBgraphics::drawString(Font &fnt, unsigned int x, unsigned int y,
     }
 }
 
+unsigned int LFBgraphics::palette(unsigned char r, unsigned char g, unsigned char b) {
+
+	return (r << 16) + (g << 8) + b;
+}
+
 
 /*****************************************************************************
  * Methode:         LFBgraphics::drawPixel                                   *
@@ -212,6 +217,54 @@ void LFBgraphics::copyHiddenToVisible() {
     }
 }
 
+
+void LFBgraphics::drawSprite(unsigned int sprite_height, unsigned int sprite_width, unsigned int sprite_bpp, unsigned char *sprite_pixel, unsigned int xstart, unsigned int ystart) {
+
+	for (unsigned int x = xstart; x < xstart + sprite_width; x++) {
+		for (unsigned int y = ystart; y < ystart + sprite_height; y++) {
+			unsigned char *ptr = sprite_pixel + (y * sprite_width + x) * sprite_bpp;
+			unsigned int col = palette(*ptr, ptr[1], ptr[2]);
+			drawPixel(x, y, col);	
+		}
+	}
+
+
+
+}
+
+
+void LFBgraphics::drawRectangle(unsigned int xstart, unsigned int ystart, unsigned int height, unsigned int width, unsigned int col) {
+	for (unsigned int x = xstart; x < xstart + width; x++) {
+		drawPixel(x, ystart, col);
+		drawPixel(x, ystart+height, col);
+	}
+	for (unsigned int y = ystart; y < ystart + height; y++) {
+		drawPixel(xstart, y, col);
+		drawPixel(xstart+width, y, col);
+	}
+}
+
+
+
+void LFBgraphics::drawCircle(int xCenter, int yCenter, int radius, unsigned int col)
+    {
+        int x, y, r2;
+        
+        r2 = radius * radius;
+        for (x = -radius; x <= radius; x++) {
+            y = (int) (sqrt(r2 - x*x) + 0.5);
+            drawPixel(xCenter + x, yCenter + y, col);
+            drawPixel(xCenter + x, yCenter - y, col);
+        }
+    }
+
+unsigned int LFBgraphics::sqrt(unsigned int x) {
+	int guess = 1;
+	while (guess * guess < x) {
+		guess += 1;
+	}
+	return guess;
+}
 
 
 void swap(unsigned int *a, unsigned int *b) {

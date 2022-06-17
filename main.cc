@@ -11,9 +11,8 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
+#include "user/VBEdemo.h"
 #include "kernel/threads/IdleThread.h"
-#include "user/HelloWorldThread.h"
-#include "user/CoopThreadDemo.h"
 
 int main() {
     // Bildschirm loeschen.
@@ -29,10 +28,12 @@ int main() {
     cpu.enable_int ();
     
     // Anwendungscode aufrufen
-    	CoopThreadDemo demo;
-	scheduler.ready(&demo);
+    	IdleThread idle;
+	VBEdemo t;
+	scheduler.ready(&t);
+	scheduler.ready(&idle);
 	scheduler.schedule();
-
+	
     
     return 0;
  }
