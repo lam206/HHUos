@@ -13,10 +13,10 @@
 #include "kernel/CPU.h"
 #include "kernel/Globals.h"
 #include "kernel/interrupts/IntDispatcher.h"
+#include "kernel/interrupts/Bluescreen.h"
 
 
 extern "C" void int_disp (unsigned int slot);
-
 
 /*****************************************************************************
  * Prozedur:        int_disp                                                 *
@@ -32,19 +32,16 @@ extern "C" void int_disp (unsigned int slot);
  *****************************************************************************/
 void int_disp (unsigned int vector) {
 
-	// kout << "int_disp got hit with vector: " << vector << endl;
-
-    /* hier muss Code eingefuegt werden */
-    
-    int retval = intdis.report(vector);
-    if (retval == -1) {
-		kout << "unknown interrupt. rebooting ..." << endl;
-		for (int i = 0; i < 10000; i++) {
-			// wait
-		}
-		kb.reboot();
+    if (vector < 32) {
+        bs_dump(vector);
+        cpu.halt ();
+    }
+	
+	if (intdis.report (vector) < 0) {
+        kout << "Panic: unexpected interrupt " << vector;
+        kout << " - processor halted." << endl;
+        cpu.halt ();
 	}
-
 }
 
 
@@ -72,10 +69,11 @@ IntDispatcher::IntDispatcher () {
  *****************************************************************************/
 int IntDispatcher::assign (unsigned int vector, ISR& isr) {
 
-    /* hier muss Code eingefuegt werden */
-	map[vector] = &isr;
-	return 0;
-
+	if (vector < size) {
+        map[vector] = &isr;
+		return 0;
+	}
+	return -1;
 }
 
 
@@ -90,14 +88,9 @@ int IntDispatcher::assign (unsigned int vector, ISR& isr) {
  * Rueckgabewert:   0 = ISR wurde aufgerufen, -1 = unbekannte Vektor-Nummer  *
  *****************************************************************************/
 int IntDispatcher::report (unsigned int vector) {
-
-    /* hier muss Code eingefuegt werden */
-	if (map[vector] != 0) {
-		map[vector]->trigger();
-		return 0;
-	} else {
-		return -1;
-	}
-
-
+   if (vector < size) {
+        map[vector]->trigger();
+        return 0;
+   }
+   return -1;
 }
