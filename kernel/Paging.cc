@@ -94,7 +94,7 @@ extern "C" {
         p_page ++;
         // pruefe ob Page frei
         if ( ((*p_page) & PAGE_RESERVED) == 0) {
-            *p_page = ( *p_page | PAGE_RESERVED);
+            *p_page = ( *p_page | PAGE_RESERVED);  // sets the reserved bit
             return (unsigned int*)(i<<12);
         }
     }
@@ -109,11 +109,20 @@ extern "C" {
  *                  Dies fuer das Debugging nuetzlich.                       *
  *****************************************************************************/
 void pg_write_protect_page(unsigned int *p_page) {
+	unsigned int *page_table_entry;
+	unsigned int page_table_entry_offset;
 
    /* hier muss Code eingefügt werden */
+	page_table_entry_offset = (unsigned int) p_page;
+	page_table_entry_offset >>= 12;
+	page_table_entry_offset &= (1 << 10) - 1;
+
+	page_table_entry = (unsigned int*)PAGE_TABLE + page_table_entry_offset;
+
+	*page_table_entry &= ~PAGE_WRITEABLE;
 
 }
-
+// p_page is a virtual memory address. The certain 10 bits tell me which page table entry this is.
 
 /*****************************************************************************
  * Funktion:        pg_notpresent_page                                       *

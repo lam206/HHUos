@@ -13,6 +13,7 @@
 #include "kernel/Globals.h"
 #include "user/VBEdemo.h"
 #include "kernel/threads/IdleThread.h"
+#include "kernel/Paging.h"
 
 int main() {
     // Bildschirm loeschen.
@@ -26,14 +27,17 @@ int main() {
     
     // Interrupts erlauben (Tastatur)
     cpu.enable_int ();
+
+    pg_init();
+
+    unsigned int *page = pg_alloc_page();
+	pg_write_protect_page(page);
+	*page = 10;  // schreibzugriff der bluescreen ausloesen sollte (page fault)
+
     
     // Anwendungscode aufrufen
-    	IdleThread idle;
-	VBEdemo t;
-	scheduler.ready(&t);
-	scheduler.ready(&idle);
-	scheduler.schedule();
-	
-    
+   for (int i = 0;i >=0; i++) {
+	   kout << "yep" ;
+   }
     return 0;
  }
