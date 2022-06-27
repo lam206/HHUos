@@ -25,6 +25,7 @@
 void PIT::interval (int us) {
 
     /* hier muss Code eingefuegt werden */
+
     
 }
 
@@ -39,6 +40,9 @@ void PIT::interval (int us) {
 void PIT::plugin () {
 
     /* hier muss Code eingefuegt werden */
+	intdis.assign(intdis.pit, *this);
+	pic.allow(pic.pit);
+
 
 }
 

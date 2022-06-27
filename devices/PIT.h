@@ -22,6 +22,8 @@ private:
     enum { time_base = 838 };  /* ns */
     int timer_interval;
 
+
+
 public:
     // Zeitgeber initialisieren.
     PIT (int us) {
