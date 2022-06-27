@@ -31,8 +31,9 @@ int main() {
     pg_init();
 
     unsigned int *page = pg_alloc_page();
-	pg_notpresent_page(page);
-	*page = 10;  // schreibzugriff der bluescreen ausloesen sollte (page fault)
+    	*page = 0;
+	pg_write_protect_page(page);
+	*page = 1;  // sollte klappen wegen TLB (das erste *page = 0 funktioniert und lagert dann die mapping im TLB ab. bei erneutem write wird dann gar nicht mehr der page table entry durchlaufen. es wird uebersehen, dass die page nun write protected ist).
 
     
     // Anwendungscode aufrufen
