@@ -4,14 +4,25 @@
  *                                                                           *
  *---------------------------------------------------------------------------*
  * Beschreibung:    Implementierung eines einfachen Zeitscheiben-Schedulers. *
- *                  Rechenbereite Threads werden in 'readQueue' verwaltet.   *
+ *                  Rechenbereite Threads werden in 'readyQueue' verwaltet.  *
  *                                                                           *
- * Autor:           Michael, Schoettner, HHU, 23.11.2018                     *
+ * Autor:           Michael, Schoettner, HHU, 17.1.2019                      *
  *****************************************************************************/
 
 #include "kernel/threads/Scheduler.h"
 #include "kernel/threads/IdleThread.h"
+#include "kernel/Globals.h"
 
+
+/*****************************************************************************
+ * Methode:         Scheduler::Scheduler                                     *
+ *---------------------------------------------------------------------------*
+ * Beschreibung:    Konstruktor des Schedulers. Registriert den Leerlauf-    *
+ *                  Thread.                                                  *
+ *****************************************************************************/
+Scheduler::Scheduler () {
+    initialized = false;
+}
 
 
 /*****************************************************************************
@@ -20,15 +31,14 @@
  * Beschreibung:    Scheduler starten. Wird nur einmalig aus main.cc gerufen.*
  *****************************************************************************/
 void Scheduler::schedule () {
+    Thread* first;
 
-    /* hier muss Code eingefuegt werden */
-    
-    /* Bevor diese Methode anufgerufen wird, muss zumindest der Idle-Thread 
-     * in der Queue eingefuegt worden sein. 
-     */
+   // Idle-Thread erzeugen und einfuegen
+   IdleThread *idle = new IdleThread();
+   ready (idle);
 
-	Thread* first_thread = (Thread*)this->readyQueue.dequeue();
-	this->start(*first_thread);
+   first = (Thread*) readyQueue.dequeue();
+   start (*first);
 }
 
 
@@ -40,11 +50,14 @@ void Scheduler::schedule () {
  * Parameter:                                                                *
  *      that        Einzutragender Thread                                    *
  *****************************************************************************/
-void Scheduler::ready (Thread * that) {
+void Scheduler::ready (Thread* that) {
+    // Thread-Wechsel durch PIT verhindern
+    cpu.disable_int ();
 
-    /* hier muss Code eingefuegt werden */
-	this->readyQueue.enqueue(that);
+    readyQueue.enqueue (that);
 
+    // Thread-Wechsel durch PIT jetzt wieder erlauben
+    cpu.enable_int ();
 }
 
 
@@ -57,11 +70,17 @@ void Scheduler::ready (Thread * that) {
  *                  nicht in der readyQueue.                                 *
  *****************************************************************************/
 void Scheduler::exit () {
+    // Thread-Wechsel durch PIT verhindern
+    cpu.disable_int ();
 
-    /* hier muss Code eingefuegt werden */
-	Thread* t = (Thread*)this->readyQueue.dequeue();
-	this->dispatch(*t);
+    // hole naechsten Thread aus ready-Liste.
+    Thread* next = (Thread*) readyQueue.dequeue();
+    
+    // next aktivieren
+    dispatch (*next);
 
+    // Interrupts werden in Thread_switch in Thread.asm wieder zugelassen
+    // dispatch kehr nicht zurueck
 }
 
 
@@ -76,11 +95,14 @@ void Scheduler::exit () {
  * Parameter:                                                                *
  *      that        Zu terminierender Thread                                 *
  *****************************************************************************/
-void Scheduler::kill (Thread * that) {
+void Scheduler::kill (Thread* that) {
+    // Thread-Wechsel durch PIT verhindern
+    cpu.disable_int ();
 
-    /* hier muss Code eingefuegt werden */
-	this->readyQueue.remove(that);
-
+    readyQueue.remove (that);
+    
+    // Thread-Wechsel durch PIT jetzt wieder erlauben
+    cpu.enable_int ();
 }
 
 
@@ -89,17 +111,51 @@ void Scheduler::kill (Thread * that) {
  *---------------------------------------------------------------------------*
  * Beschreibung:    CPU freiwillig abgeben und Auswahl des naechsten Threads.*
  *                  Naechsten Thread aus der readyQueue holen, den aktuellen *
- *                  in die readyQueue wieder eintragen. Das Umschalten soll  *
- *                  mithilfe des Dispatchers erfolgen.                       *
+ *                  aus der readyQueue austragen und auf den naechsten       *
+ *                  mithilfe des Dispatchers umschalten.                     *
  *                                                                           *
  *                  Achtung: Falls nur der Idle-Thread läuft, so ist die     *
  *                           readyQueue leer.                                *
  *****************************************************************************/
 void Scheduler::yield () {
+    Thread* next;
 
-    /* hier muss Code eingefuegt werden */
-	this->readyQueue.enqueue(this->get_active());
-	Thread* next = (Thread*)this->readyQueue.dequeue();
-	this->dispatch(*next);
+    // Thread-Wechsel durch PIT verhindern
+    cpu.disable_int ();
 
+    next = (Thread*) readyQueue.dequeue ();
+    
+    readyQueue.enqueue ((Thread*) active());
+
+    dispatch (*next);
+    
+    // Interrupts werden in Thread_switch in Thread.asm wieder zugelassen
+    // dispatch kehr nicht zurueck
+}
+
+
+/*****************************************************************************
+ * Methode:         Scheduler::prepare_preemption                            *
+ *---------------------------------------------------------------------------*
+ * Beschreibung:    CPU soll aktuellem Thread entzogen werden. Wird nur      *
+ *                  aus dem Zeitgeber-Interrupt-Handler aufgerufen. Daher    *
+ *                  muss nicht gegenueber Interrupts synchronisiert werden.  *
+ *                                                                           *
+ * Rueckgabewert:   true:   Var. fuer Thread-Wechsel in startup.asm gesetzt  *
+ *                  false:  kein anderer Thread will rechnen oder Scheduler  *
+ *                          ist nicht fertig initialisiert. Dann nichts tun. *
+ *****************************************************************************/
+bool Scheduler::prepare_preemption () {
+    
+    if ( initialized==false)
+        return false;
+    
+    Thread* act  = (Thread*) get_active();
+    Thread* next = (Thread*) readyQueue.dequeue ();
+    
+    readyQueue.enqueue (act);
+
+    prepare_thread_switch (next);
+    
+    return true;
 }

@@ -8,9 +8,17 @@
 ;*                  Es wird alles vorbereitet, damit so schnell wie moeglich  *
 ;*                  die weitere Ausfuehrung durch C-Code erfolgen kann.       *
 ;*                                                                            *
+;*                  Hier erweitert, um BIOS callund Paging-Aktivierung,       *
+;*                  Unterstuetzung des Bluescreens und preemptives            * 
+;*                  Thread-Switching.                                         *
+;*                                                                            *
 ;* Autor:           Olaf Spinczyk, TU Dortmund                                *
-;*                  Michael Schoettner, HHU, 15.12.2018                       *
+;*                  Michael Schoettner, HHU, 21.12.2018                        *
 ;******************************************************************************
+
+; fuer preemptives Umschalten zwischen Threads
+%include "kernel/threads/Thread.inc"
+
 
 ; Multiboot-Konstanten
 MULTIBOOT_PAGE_ALIGN	equ	1<<0
@@ -35,6 +43,8 @@ MULTIBOOT_EAX_MAGIC	equ	0x2badb002
 [GLOBAL paging_on]
 [GLOBAL get_page_fault_address]
 [GLOBAL get_int_esp]
+[GLOBAL get_thread_vars]
+
 
 ; Michael Schoettner:
 ; Nachfolgender label steht fuer das 'delete', welches jetzt implementiert
@@ -158,17 +168,81 @@ wrapper i
 
 ; Gemeinsamer Rumpf
 wrapper_body:
-	cld             ; das erwartet der gcc so.
-	push	ecx		; Sichern der fluechtigen Register
-	push	edx
-	and	eax,0xff	; Der generierte Wrapper liefert nur 8 Bits
-	push	eax		; Nummer der Unterbrechung uebergeben
-	call	int_disp
-	add	esp,4		; Parameter vom Stack entfernen
-	pop	edx         ; fluechtige Register wieder herstellen
-	pop	ecx
-	popad           ; alle Register wiederherstellen
-	iret            ; fertig!
+    cld             ; das erwartet der gcc so.
+    push	ecx		; Sichern der fluechtigen Register
+    push	edx
+    and	eax,0xff	; Der generierte Wrapper liefert nur 8 Bits
+    push	eax		; Nummer der Unterbrechung uebergeben
+    call	int_disp; Interrupt-Dispatcher aufrufen
+    add	esp,4		; Nummer der Unterbrechung vom Stack entfernen
+    pop	edx         ; fluechtige Register wieder herstellen
+    pop	ecx
+    cmp     eax,1   ; erzwungener Threadwechsel angefordert?
+    je      preempt; ja
+    popad	        ; alle Register wiederherstellen
+    iret            ; fertig!
+
+;
+; Registersatz des aktuellen Threads sichern (in ThreadState-Struktur)
+;
+preempt:
+
+    mov eax, regs_active
+    mov eax, [eax]
+
+    ; Registerinhalte wurden von PUSHAD auf Stack gelegt
+    mov ebx, [esp]
+    mov	[edi_offset+eax],ebx
+    mov ebx, [esp+4]
+    mov	[esi_offset+eax],ebx
+    mov ebx, [esp+8]
+    mov	[ebp_offset+eax],ebx
+
+    ; esp wird spaeter behandelt
+
+    mov ebx, [esp+16]
+    mov	[ebx_offset+eax],ebx
+    mov ebx, [esp+20]
+    mov	[edx_offset+eax],ebx
+    mov ebx, [esp+24]
+    mov	[ecx_offset+eax],ebx
+    mov ebx, [esp+28]
+    mov	[eax_offset+eax],ebx
+    mov ebx, [esp+40]
+    mov	[efl_offset+eax],ebx
+
+    ; Stack zurueckschneiden und passend machen
+    mov ebx, [esp+32]   ; raddr merken
+    add esp, 44         ; auch INT-Stackframe entfernen
+    push ebx            ; raddr wieder ablegen
+    mov	[esp_offset+eax],esp  ; stack pointer sichern
+
+    ; Registersatz des naechsten Threads laden
+    mov eax, regs_next
+    mov eax, [eax]
+
+    ; Stack-Register laden
+    mov	esp,[esp_offset+eax]
+    mov	ebp,[ebp_offset+eax]
+
+    ; Stackframe zusammenbauen
+    mov	ebx,[efl_offset+eax]    ; flags laden
+    pop ecx                     ; raddr vom Stack holen
+    push ebx                    ; flags auf Stack legen
+    popf                        ; und in eflags einlesen
+    push ecx                    ; raddr wieder ablegen
+
+    ; restliche Register laden
+    mov	ebx,[ebx_offset+eax]
+    mov	esi,[esi_offset+eax]
+    mov	edi,[edi_offset+eax]
+    mov	ecx,[ecx_offset+eax]
+    mov	edx,[edx_offset+eax]
+    mov	eax,[eax_offset+eax]
+
+    sti        ; Interrupts erlauben, evt. von Scheduler::block zuvor abgeschaltet
+    ret
+
 
 ;
 ; setup_idt
@@ -298,6 +372,18 @@ get_int_esp:
     mov [eax], ecx
     ret
 
+; Auslesen der Thread-Vars (fuer erzwungenen Thread-Wechsel notwendig)
+; C Prototyp: void get_thread_vars (unsigned int* regs_active,
+;                                   unsigned int* reg_next);
+get_thread_vars:
+    mov	eax,[4+esp]     ; regs_active
+    mov ebx, regs_active
+    mov [eax], ebx
+    mov	eax,[8+esp]     ; regs_next
+    mov ebx, regs_next
+    mov [eax], ebx
+    ret
+
 
 [SECTION .data]
 	
@@ -383,4 +469,14 @@ idt16_descr:
 ; | (PUSHAD)    |
 ; |-------------| <-- int_esp
 int_esp:
+    db 0,0,0,0   
+   
+;
+; Variablen fuer erzwungenen Thread-Wechsel
+; (werden in der Unterbrechungsbehandlung des PIT gesetzt)
+;
+regs_active:
     db 0,0,0,0
+regs_next:
+    db 0,0,0,0
+

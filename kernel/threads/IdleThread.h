@@ -5,7 +5,7 @@
  *---------------------------------------------------------------------------*
  * Beschreibung:    Wird nur aktiviert, wenn kein Thread arbeiten moechte.   *
  *                                                                           *
- * Autor:           Michael, Schoettner, HHU, 13.8.2016                      *
+ * Autor:           Michael, Schoettner, HHU, 18.1.2019                      *
  *****************************************************************************/
 
 #ifndef __IdleThread_include__
@@ -25,13 +25,17 @@ public:
     IdleThread () : Thread () {  }
     
     void run () {
+        
+        // Idle-Thread läuft, ab jetzt ist der Scheduler fertig initialisiert
+        scheduler.setInitialized();
+        
         while (1) {
-		kout << "Hey stop! I want to be idle!" << endl;
+            // CPU sofort abgeben, damit ein evt.
+            // wartender Thread sofort loslegen kann.
             scheduler.yield ();
         }
     }
     
-	~IdleThread() {}
  };
 
 #endif

@@ -77,52 +77,19 @@ inline unsigned int PCSPK::readCounter() {
     return (hi << 8) | lo;
 }
 
-
 /*****************************************************************************
  * Methode:         PCSPK::delay                                             *
  *---------------------------------------------------------------------------*
- * Beschreibung:    Verzoegerung um X ms (in 1ms Schritten; Min. 1ms).       *
+ * Beschreibung:    Verzoegerung um X ms (in 10ms Schritten; Min. 1ms).      *
  *                                                                           *
  * Parameter:       time (delay in ms)                                       *
  *****************************************************************************/
 inline void PCSPK::delay (int time) {
 
-	// zaehler 1 essentially not useful
-	// each zaehler is a frequency divider/counter, triggering at 0
-	// zaehler 2 moves pc speaker back and forth from in and out. different sounds at points in between in and out.
-	// zaehler 0 used for delaying
-	//
-	// count * dec_time = count_time
-	//
-	// count_time = 10ms
-	// dec_freq = 1.193182 MHz
-	// dec_time = 1 / dec_freq = 0.00083809511 ms
-	// 
-	// count = count_time / dec_time = count_time * dec_freq = 10ms * 1.193182 MHz = 10 * 1.193182k =~ 11.93k
-
-    /* Hier muess Code eingefuegt werden */
-	int rounds = time / 10;
-
-	control.outb(0x34); // 0011 0100. Zaehler 0, low dann high byte, 	
-
-	// 0x2e9a = 11930 in decimal. derivation of 11930 above.
-	data0.outb(0x9a); // low
-	data0.outb(0x2e); // high
-
-	unsigned int cnt_prev=0, cnt_now=0;
-	for (int i = 0; i < rounds; i++) {
-		cnt_prev = readCounter();
-		while (1) {
-			cnt_now = readCounter();
-			if (cnt_now == 0)
-				break;
-			if (cnt_now > cnt_prev)  // int overflow
-				break;
-			cnt_prev = cnt_now;
-		}
-	}
+    /* hier muss Code eingefuegt werden */
 
 }
+
 
 
 /*****************************************************************************

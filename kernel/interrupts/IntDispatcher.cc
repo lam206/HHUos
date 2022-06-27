@@ -16,7 +16,9 @@
 #include "kernel/interrupts/Bluescreen.h"
 
 
-extern "C" void int_disp (unsigned int slot);
+extern "C" unsigned int int_disp (unsigned int vector);
+
+
 
 /*****************************************************************************
  * Prozedur:        int_disp                                                 *
@@ -29,19 +31,35 @@ extern "C" void int_disp (unsigned int slot);
  *                  mithilfe von 'IntDispatcher::report' aufgerufen werden.  *
  * Parameter:                                                                *
  *      vector:     Vektor-Nummer der Unterbrechung                          *
+ *                                                                           *
+ * Rueckgabewert:   Thread-Wechsel veranlassen?                              *
+ *                  0 = nein, 1 = ja                                         *
+ *                                                                           *
+ *                  Dies geht nur indirekt ueber den Assembler-Code, da hier * 
+ *                  der IRET verwendet wird und nur so Interrupts wieder     * 
+ *                  zugelassen werden und auch der Stack richtig aufgeräumt  * 
+ *                  werden muss. Interrupt-Routine des PIT setzt             * 
+ *                  'forceSwitch', falls die Zeitscheibe aufgebraucht ist.   *
  *****************************************************************************/
-void int_disp (unsigned int vector) {
+unsigned int int_disp (unsigned int vector) {
 
     if (vector < 32) {
         bs_dump(vector);
         cpu.halt ();
     }
 	
-	if (intdis.report (vector) < 0) {
+	if (intdis.report (vector) == 0) {
+        if (forceSwitch == 1) {
+            forceSwitch = 0;
+            return 1;
+        }
+	}
+	else {
         kout << "Panic: unexpected interrupt " << vector;
         kout << " - processor halted." << endl;
         cpu.halt ();
 	}
+	return 0;
 }
 
 

@@ -36,15 +36,21 @@ extern "C"
 
 
 /*****************************************************************************
- * Prozedur:        Thread_init                                           *
+ * Prozedur:        Thread_init                                         *
  *---------------------------------------------------------------------------*
- * Beschreibung:    Bereitet den Kontext der Koroutine fuer den ersten       *
- *                  Aufruf vor.                                              *
+ * Beschreibung:    Bereitet den Kontext eines Threads fuer den ersten       *
+ *                  Aufruf vor. Diese Methode wird jetzt nur noch vom erten  *
+ *                  Thread genutzt, das ist der Idle-Thread der zuerst in    *
+ *                  Ready-Queue eingetragen wird.                            *
+ *                  Der Stackframe muss kompatibel zum Interrupt-Stackframe  *
+ *                  sein, da später nur noch im Timer-Interrupt umgechaltet  *
+ *                  wird (iehe startup.asm).                                 *
  *****************************************************************************/
 void Thread_init (struct ThreadState* regs, unsigned int* stack,
-                     void (*kickoff)(Thread*), void* object) {
+                       void (*kickoff)(Thread*), void* object) {
     
     register unsigned int **sp = (unsigned int**)stack;
+    unsigned int flags;
     
     // Stack initialisieren. Es soll so aussehen, als waere soeben die
     // eine Funktion aufgerufen worden, die als Parameter den Zeiger
@@ -74,6 +80,18 @@ void Thread_init (struct ThreadState* regs, unsigned int* stack,
     regs->edi = 0;
     regs->ebp = 0;
     regs->esp = sp;
+
+    // nachfolgend die fluechtige Register
+    // wichtig fuer preemptives Multitasking
+    regs->eax = 0;
+    regs->ecx = 0;
+    regs->edx = 0;
+    
+    // flags initialisieren, Stackframe wie bei einem Interrupt
+    asm volatile ("pushf;"
+                  "pop %0;" : "=a"(flags)
+                  );
+    regs->efl = (void*)flags;
 }
 
 
@@ -140,5 +158,6 @@ void Thread::start () {
 	Thread_start(&regs);
     
 }
+
 
 
