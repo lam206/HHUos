@@ -31,7 +31,7 @@ int main() {
     pg_init();
 
     unsigned int *page = pg_alloc_page();
-	pg_write_protect_page(page);
+	pg_notpresent_page(page);
 	*page = 10;  // schreibzugriff der bluescreen ausloesen sollte (page fault)
 
     

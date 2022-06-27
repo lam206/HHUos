@@ -109,15 +109,7 @@ extern "C" {
  *                  Dies fuer das Debugging nuetzlich.                       *
  *****************************************************************************/
 void pg_write_protect_page(unsigned int *p_page) {
-	unsigned int *page_table_entry;
-	unsigned int page_table_entry_offset;
-
-   /* hier muss Code eingefügt werden */
-	page_table_entry_offset = (unsigned int) p_page;
-	page_table_entry_offset >>= 12;
-	page_table_entry_offset &= (1 << 10) - 1;
-
-	page_table_entry = (unsigned int*)PAGE_TABLE + page_table_entry_offset;
+	unsigned int *page_table_entry = get_page_table_entry(p_page);
 
 	*page_table_entry &= ~PAGE_WRITEABLE;
 
@@ -132,7 +124,22 @@ void pg_write_protect_page(unsigned int *p_page) {
 void pg_notpresent_page(unsigned int *p_page) {
 
    /* hier muss Code eingefügt werden */
+	unsigned int* page_table_entry = get_page_table_entry(p_page);
+	*page_table_entry &= ~PAGE_PRESENT;
 
+}
+
+unsigned int* get_page_table_entry(unsigned int *p_page) {
+	unsigned int *page_table_entry;
+	unsigned int page_table_entry_offset;
+
+	page_table_entry_offset = (unsigned int) p_page;
+	page_table_entry_offset >>= 12;
+	page_table_entry_offset &= (1 << 10) - 1;
+
+	page_table_entry = (unsigned int*)PAGE_TABLE + page_table_entry_offset;
+
+	return page_table_entry;
 }
 
 

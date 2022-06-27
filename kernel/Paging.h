@@ -67,6 +67,9 @@ extern void pg_notpresent_page(unsigned int *p_page);
 // gibt eine 4 KB Page frei
 extern void pg_free_page(unsigned int *p_page);
 
+// holt pointer auf entry
+extern unsigned int* get_page_table_entry(unsigned int *p_page);
+
 #endif
 
 
