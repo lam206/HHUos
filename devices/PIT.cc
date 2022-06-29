@@ -25,7 +25,12 @@
 void PIT::interval (int us) {
 
     /* hier muss Code eingefuegt werden */
+	unsigned int reload_value = us / time_base;  // since reload_value * time_base = us
+	control.outb(0b00110110);
 
+	unsigned int lobyte_mask = (1 << 8)-1;
+	channel0.outb((unsigned char) (reload_val & lobyte_mask));  // lobyte
+	channel0.outb((unsigned char) ((reload_val >> 8) & lobyte_mask));  // then hibyte (access mode 11)
     
 }
 

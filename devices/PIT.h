@@ -19,14 +19,16 @@ private:
     PIT(const PIT &copy); // Verhindere Kopieren
          
 private:
-    enum { time_base = 838 };  /* ns */
+    enum { time_base = 838 };  /* ns */ // time period, T, for clock of 1.19MHz frequency
     int timer_interval;
 
+    IOport control;
+    IOport channel0;
 
 
 public:
     // Zeitgeber initialisieren.
-    PIT (int us) {
+    PIT (int us) : control(0x43), channel0(0x40) {
         interval (us);
     }
     

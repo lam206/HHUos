@@ -125,7 +125,7 @@ void Scheduler::yield () {
 
     next = (Thread*) readyQueue.dequeue ();
     
-    readyQueue.enqueue ((Thread*) active());
+    readyQueue.enqueue ((Thread*) active);
 
     dispatch (*next);
     

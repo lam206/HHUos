@@ -87,6 +87,11 @@ inline unsigned int PCSPK::readCounter() {
 inline void PCSPK::delay (int time) {
 
     /* hier muss Code eingefuegt werden */
+	unsigned long start_time = systime;
+	while (systime - start_time > time) {
+
+	}
+	return;
 
 }
 
