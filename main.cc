@@ -30,6 +30,8 @@ int main() {
     
     // Interrupts erlauben (Tastatur)
     cpu.enable_int ();
+
+    pcspk.tetris();
     
     // Anwendungscode aufrufen
 	while (1) {
