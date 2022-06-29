@@ -25,7 +25,7 @@
 void PIT::interval (int us) {
 
     /* hier muss Code eingefuegt werden */
-	unsigned int reload_value = us / time_base;  // since reload_value * time_base = us
+	unsigned int reload_val = ( us / time_base ) * 1000;  // since reload_val * time_base = us. * 1000 weil us in mikrosekunden und time_base in nanosekunden
 	control.outb(0b00110110);
 
 	unsigned int lobyte_mask = (1 << 8)-1;
@@ -45,8 +45,8 @@ void PIT::interval (int us) {
 void PIT::plugin () {
 
     /* hier muss Code eingefuegt werden */
-	intdis.assign(intdis.pit, *this);
-	pic.allow(pic.pit);
+	intdis.assign(intdis.timer, *this);
+	pic.allow(pic.timer);
 
 
 }
@@ -66,6 +66,10 @@ void PIT::trigger () {
     
     // alle 10ms, Systemzeit weitersetzen
     systime++;
+    if (systime % 100 == 0) {
+	    char symbols[4] = {'|', '/', '-', '\\'};
+	    kout.show(79, 0, symbols[(systime / 100) % 4]);
+    }
 
     // Bei jedem Tick einen Threadwechsel ausloesen.
     // Aber nur wenn der Scheduler bereits fertig intialisiert wurde

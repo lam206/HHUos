@@ -12,6 +12,7 @@
 #define __PIT_include__
 
 #include "kernel/interrupts/ISR.h"
+#include "kernel/IOport.h"
 
 class PIT : public ISR {
     

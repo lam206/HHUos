@@ -11,7 +11,6 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "user/VBEdemo.h"
 #include "kernel/threads/IdleThread.h"
 #include "kernel/Paging.h"
 
@@ -25,27 +24,17 @@ int main() {
     
     // Startmeldung ausgeben
     kout << "HHUos" << endl << "=========" << endl << endl;
-    
     // Tastatur-Unterbrechungsroutine einstoepseln
     kb.plugin ();
+    pit.plugin ();
     
     // Interrupts erlauben (Tastatur)
     cpu.enable_int ();
-
-    pg_init();
-
-    unsigned int *page = pg_alloc_page();
-    	*page = 0;
-	pg_write_protect_page(page);
-
-	invalidate_tlb_entry(page);  // removes the virtual adress from TLB virtual -> physical mapping.
-
-	*page = 1;  // sollte nicht mehr klappen nach invlpg Befehl.
-
     
     // Anwendungscode aufrufen
-   for (int i = 0;i >=0; i++) {
-	   kout << "yep" ;
-   }
+	while (1) {
+
+	}
+
     return 0;
  }

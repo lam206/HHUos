@@ -87,8 +87,13 @@ inline unsigned int PCSPK::readCounter() {
 inline void PCSPK::delay (int time) {
 
     /* hier muss Code eingefuegt werden */
+	if (time < 0) {
+		kout << "Error: Can't have negative time" << endl;
+		return;
+	}
+
 	unsigned long start_time = systime;
-	while (systime - start_time > time) {
+	while (systime - start_time > (unsigned long) time) {
 
 	}
 	return;
