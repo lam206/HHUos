@@ -92,9 +92,10 @@ inline void PCSPK::delay (int time) {
 		return;
 	}
 
-	unsigned long start_time = systime;
-	while (systime - start_time > (unsigned long) time) {
-
+	unsigned long start_systime = systime;
+	unsigned long ms_passed = (systime - start_systime) * 10;  // systime is in 10ms
+	while (ms_passed < (unsigned long) time) {
+		ms_passed = (systime - start_systime) * 10;
 	}
 	return;
 
