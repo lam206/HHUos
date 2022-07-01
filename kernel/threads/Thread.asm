@@ -69,6 +69,13 @@ Thread_switch:
 	mov [ecx+esi_offset], esi
 	mov [ecx+esp_offset], esp
 	mov [ecx+ebp_offset], ebp
+	; additional registers. saving the real eax first and then saving efl via eax.
+	mov [ecx+eax_offset], eax
+	mov [ecx+ecx_offset], ecx
+	mov [ecx+edx_offset], edx
+	pushf
+	pop eax
+	mov [ecx+efl_offset], eax
 
 	; loading
 	mov ebx, [edx+ebx_offset]
@@ -76,8 +83,16 @@ Thread_switch:
 	mov esi, [edx+esi_offset]
 	mov esp, [edx+esp_offset]
 	mov ebp, [edx+ebp_offset]
+	; addtional registers. loading efl via eax and then loading the right eax afterwards.
+	mov ecx, [edx+ecx_offset]
+	mov edx, [edx+edx_offset]
+	mov eax, [edx+efl_offset]
+	push eax
+	popf
+	mov eax, [edx+eax_offset]
 
 	; kickoff if first time or back to switch2next
+	sti  ; set all register right for the next thread. no other code will run hereafter other than the target thread because that would mess up the registers again.
 	ret
 
 
