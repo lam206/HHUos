@@ -60,9 +60,8 @@ Thread_switch:
 ; *
 ; * Hier muss Code eingefuegt werden
 ; *
-	mov ecx, [esp+4]  ; now, to be saved
-	mov edx, [esp+8]  ; then, to be loaded
-
+	push ecx  ; need to save all registers to specific adress but need one register to point to the adress
+	mov ecx, [esp+8]  ; now, to be saved. now 8 because pushed ecx to stack.
 	; saving
 	mov [ecx+ebx_offset], ebx
 	mov [ecx+edi_offset], edi
@@ -71,12 +70,15 @@ Thread_switch:
 	mov [ecx+ebp_offset], ebp
 	; additional registers. saving the real eax first and then saving efl via eax.
 	mov [ecx+eax_offset], eax
-	mov [ecx+ecx_offset], ecx
 	mov [ecx+edx_offset], edx
 	pushf
 	pop eax
 	mov [ecx+efl_offset], eax
+	; save the ecx used for pointing
+	pop eax
+	mov [ecx+efl_offset], eax
 
+	mov edx, [esp+8]  ; then, to be loaded. still 8 because now esp is back to original (where second argument is two words down. first argument only one word down, but esp was increased there due to saved ecx.
 	; loading
 	mov ebx, [edx+ebx_offset]
 	mov edi, [edx+edi_offset]
@@ -85,11 +87,15 @@ Thread_switch:
 	mov ebp, [edx+ebp_offset]
 	; addtional registers. loading efl via eax and then loading the right eax afterwards.
 	mov ecx, [edx+ecx_offset]
-	mov edx, [edx+edx_offset]
 	mov eax, [edx+efl_offset]
 	push eax
 	popf
 	mov eax, [edx+eax_offset]
+	; restore edx used for pointing
+	push eax
+	mov eax, [edx+edx_offset]
+	mov edx, eax
+	pop eax
 
 	; kickoff if first time or back to switch2next
 	sti  ; set all register right for the next thread. no other code will run hereafter other than the target thread because that would mess up the registers again.
