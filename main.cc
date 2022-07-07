@@ -38,8 +38,8 @@ int main() {
     IdleThread idle;
 
     scheduler.ready(&idle);
-    //scheduler.ready(&counter);
-    //scheduler.ready(&player);
+    scheduler.ready(&counter);
+    scheduler.ready(&player);
     scheduler.schedule();
     
     // Anwendungscode aufrufen
