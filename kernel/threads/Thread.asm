@@ -76,7 +76,7 @@ Thread_switch:
 	mov [ecx+efl_offset], eax
 	; save the ecx used for pointing
 	pop eax
-	mov [ecx+efl_offset], eax
+	mov [ecx+ecx_offset], eax
 
 	mov edx, [esp+8]  ; then, to be loaded. still 8 because now esp is back to original (where second argument is two words down. first argument only one word down, but esp was increased there due to saved ecx.
 	; loading
