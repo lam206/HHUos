@@ -92,10 +92,7 @@ Thread_switch:
 	popf
 	mov eax, [edx+eax_offset]
 	; restore edx used for pointing
-	push eax
-	mov eax, [edx+edx_offset]
-	mov edx, eax
-	pop eax
+	mov edx, [edx+edx_offset]
 
 	; kickoff if first time or back to switch2next
 	sti  ; set all register right for the next thread. no other code will run hereafter other than the target thread because that would mess up the registers again.
