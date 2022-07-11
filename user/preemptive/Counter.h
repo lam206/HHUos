@@ -2,8 +2,11 @@
 
 class Counter : public Thread {
 	private:
+		int pos;
 	public:
-		Counter() : Thread() {};
+		Counter(int inpos) : Thread() {
+			this->pos = inpos;
+		};
 
 		void run();
 

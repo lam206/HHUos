@@ -12,7 +12,6 @@
 
 #include "kernel/Globals.h"
 #include "kernel/threads/IdleThread.h"
-#include "kernel/Paging.h"
 #include "user/preemptive/Counter.h"
 #include "user/preemptive/Player.h"
 
@@ -34,12 +33,16 @@ int main() {
     // Interrupts erlauben (Tastatur)
     cpu.enable_int ();
 
-    Counter counter;
+    Counter counter(0);
+    Counter counter2(10);
+    Counter counter3(20);
     Player player;
     IdleThread idle;
 
     scheduler.ready(&idle);
     scheduler.ready(&counter);
+    scheduler.ready(&counter2);
+    scheduler.ready(&counter3);
     scheduler.ready(&player);
     scheduler.schedule();
     
