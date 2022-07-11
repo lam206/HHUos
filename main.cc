@@ -23,6 +23,7 @@ extern "C" {
 int main() {
     // Bildschirm loeschen.
     kout.clear ();
+    allocator.init();
     
     // Startmeldung ausgeben
     kout << "HHUos" << endl << "=========" << endl << endl;
