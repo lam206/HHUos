@@ -1,15 +1,18 @@
 ;*****************************************************************************
 ;*                                                                           *
-;*                            C O R O U T I N E                              *
+;*                               T H R E A D                                 *
 ;*                                                                           *
 ;*---------------------------------------------------------------------------*
-;* Beschreibung:    Assemblerdarstellung der 'struct ThreadState' aus     *
-;*                  ThreadState.h                                         *
+;* Beschreibung:    Assemblerdarstellung der struct ThreadState aus          *
+;*                  ThreadState.h                                            *
 ;*                                                                           *
 ;*                  Die Reihenfolge der Registerbezeichnungen muss unbedingt *
-;*                  mit der von 'struct ThreadState' uebereinstimmen.     *
+;*                  mit der von struct ThreadState uebereinstimmen.          *
+;*                                                                           *
+;*                  Jetzt werden alle Register beruecksichtigt!              *
 ;*                                                                           *
 ;* Autor:           Olaf Spinczyk, TU Dortmund                               *
+;*                  Michael Schoettner, HHU, 1.1.2017                        *
 ;*****************************************************************************
 
 %include "kernel/threads/Thread.inc"
@@ -23,82 +26,85 @@
 
 [SECTION .text]
 
-; COROUTINE_START : Startet die erste Thread ueberhaupt.
+; Thread_START : Startet den ersten Thread ueberhaupt.
 ;
 ; C Prototyp: void Thread_start (struct ThreadState* regs);
 
+; Normaler Stack (bottom-up):
+; 2. Parameter
+; 1. Parameter
+; Ruecksprungadresse
+; altes ebp             <- ebp
+; lokale Variablen      <- esp
+;
+; Praeparierter Stack (bottom-up):
+; 2. Parameter
+; 1. Parameter
+; "Ruecksprungadresse" 0x131155
+; lokale Variablen      <- esp
+
+; Task
 Thread_start:
 
-; *
-; * Hier muss Code eingefuegt werden
-; *
-	; load registers with content of &regs argument passed
-	mov ecx, [esp+4]  ; &regs
-	mov ebx, [ecx+ebx_offset]
-	mov edi, [ecx+edi_offset]
-	mov esi, [ecx+esi_offset]
-	mov esp, [ecx+esp_offset]  ; at entry this is normal stack but this line switches it to app_stack
-	mov ebp, [ecx+ebp_offset]
+    mov ecx, [esp + 0x04]  ; Lade ThreadState
 
-	; kickoff
-	ret
-	
+    ; Lade Register aus ThreadState
+    mov ebx, [ecx + ebx_offset]
+    mov esi, [ecx + esi_offset]
+    mov edi, [ecx + edi_offset]
+    mov ebp, [ecx + ebp_offset]
+    mov esp, [ecx + esp_offset]
+
+    ret  ; Starte Thread
 
 
-
-; COROUTINE_SWITCH : Threadnumschaltung. Der aktuelle Registersatz wird
-;                    gesichert und der Registersatz der neuen Thread
-;                    wird in den Prozessor eingelesen.
+; Thread_SWITCH : Threadnumschaltung. Der aktuelle Registersatz wird
+;                 gesichert und der Registersatz des neuen Threads
+;                 wird in den Prozessor eingelesen.
 ;
 ; C Prototyp: void Thread_switch (struct ThreadState* regs_now,
-;                                    struct ThreadState* reg_then);
+;                                 struct ThreadState* reg_then);
 ;
 ; Achtung: Die Parameter werden von rechts nach links uebergeben.
-;
+
+; Task
 Thread_switch:
 
-; *
-; * Hier muss Code eingefuegt werden
-; *
-	push ecx  ; need to save all registers to specific adress but need one register to point to the adress
-	mov ecx, [esp+8]  ; now, to be saved. now 8 because pushed ecx to stack.
-	; saving
-	mov [ecx+ebx_offset], ebx
-	mov [ecx+edi_offset], edi
-	mov [ecx+esi_offset], esi
-	mov [ecx+esp_offset], esp
-	mov [ecx+ebp_offset], ebp
-	; additional registers. saving the real eax first and then saving efl via eax.
-	mov [ecx+eax_offset], eax
-	mov [ecx+edx_offset], edx
-	pushf
-	pop eax
-	mov [ecx+efl_offset], eax
-	; save the ecx used for pointing
-	pop eax
-	mov [ecx+ecx_offset], eax
+    ; Lade Adresse des aktuellen ThreadStates
+    mov ecx, [esp + 0x04]
 
-	mov edx, [esp+8]  ; then, to be loaded. still 8 because now esp is back to original (where second argument is two words down. first argument only one word down, but esp was increased there due to saved ecx.
-	; loading
-	mov ebx, [edx+ebx_offset]
-	mov edi, [edx+edi_offset]
-	mov esi, [edx+esi_offset]
-	mov esp, [edx+esp_offset]
-	mov ebp, [edx+ebp_offset]
-	; addtional registers. loading efl via eax and then loading the right eax afterwards.
-	mov ecx, [edx+ecx_offset]
-	mov eax, [edx+efl_offset]
-	push eax
-	popf
-	mov eax, [edx+eax_offset]
-	; restore edx used for pointing
-	mov edx, [edx+edx_offset]
+    ; Sichere den aktuellen Registersatz auf dem Stack
+    mov [ecx + ebx_offset], ebx
+    mov [ecx + esi_offset], esi
+    mov [ecx + edi_offset], edi
+    mov [ecx + ebp_offset], ebp
+    mov [ecx + esp_offset], esp
 
-	; kickoff if first time or back to switch2next
-	sti  ; set all register right for the next thread. no other code will run hereafter other than the target thread because that would mess up the registers again.
-	ret
+    ; Sichere den aktuellen fluechtigen Registersatz auf dem Stack
+    mov [ecx + eax_offset], eax
+    mov [ecx + ecx_offset], ecx
+    mov [ecx + edx_offset], edx
+    pushf                        ; Nutze eax als Zwischenspeicher fuer Flags
+    pop eax
+    mov [ecx + efl_offset], eax
 
+    ; Lade Adresse des nachfolgenden ThreadStates
+    mov edx, [esp + 0x08]
 
+    ; Lade den Registersatz des nachfolgenden Threads
+    mov ebx, [edx + ebx_offset]
+    mov esi, [edx + esi_offset]
+    mov edi, [edx + edi_offset]
+    mov ebp, [edx + ebp_offset]
+    mov esp, [edx + esp_offset]
 
+    ; Lade fluechtige Register des nachfolgenden Threads
+    mov eax, [edx + efl_offset]  ; Nutze eax als Zwischenspeicher fuer Flags
+    push eax
+    popf
+    mov eax, [edx + eax_offset]  ; Muss nach Flag-Operation passieren
+    mov ecx, [edx + ecx_offset]
+    mov edx, [edx + edx_offset]  ; Muss am Ende passieren, sonst Adresse weg
 
-
+    sti  ; Schalte Interrupts wieder ein
+    ret  ; Starte den folgenden Thread
