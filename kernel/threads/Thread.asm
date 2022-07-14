@@ -67,28 +67,32 @@ Thread_start:
 ;
 ; Achtung: Die Parameter werden von rechts nach links uebergeben.
 
-; Task
 Thread_switch:
 
-    ; Lade Adresse des aktuellen ThreadStates
-    mov ecx, [esp + 0x04]
+; *
+; * Hier muss Code eingefuegt werden
+; *
+	push ecx  ; need to save all registers to specific adress but need one register to point to the adress
+	mov ecx, [esp+8]  ; now, to be saved. now 8 because pushed ecx to stack.
+	; saving
+	mov [ecx+ebx_offset], ebx
+	mov [ecx+edi_offset], edi
+	mov [ecx+esi_offset], esi
+	add esp, 4
+	mov [ecx+esp_offset], esp ; add and sub because esp was changed by ecx push
+	sub esp, 4
+	mov [ecx+ebp_offset], ebp
+	; additional registers. saving the real eax first and then saving efl via eax.
+	mov [ecx+eax_offset], eax
+	mov [ecx+edx_offset], edx
+	pushf
+	pop eax
+	mov [ecx+efl_offset], eax
+	; save the ecx used for pointing
+	pop eax
+	mov [ecx+ecx_offset], eax
 
-    ; Sichere den aktuellen Registersatz auf dem Stack
-    mov [ecx + ebx_offset], ebx
-    mov [ecx + esi_offset], esi
-    mov [ecx + edi_offset], edi
-    mov [ecx + ebp_offset], ebp
-    mov [ecx + esp_offset], esp
-
-    ; Sichere den aktuellen fluechtigen Registersatz auf dem Stack
-    mov [ecx + eax_offset], eax
-    mov [ecx + ecx_offset], ecx
-    mov [ecx + edx_offset], edx
-    pushf                        ; Nutze eax als Zwischenspeicher fuer Flags
-    pop eax
-    mov [ecx + efl_offset], eax
-
-    ; Lade Adresse des nachfolgenden ThreadStates
+	; Lade Adresse des nachfolgenden ThreadStates
     mov edx, [esp + 0x08]
 
     ; Lade den Registersatz des nachfolgenden Threads
@@ -106,5 +110,11 @@ Thread_switch:
     mov ecx, [edx + ecx_offset]
     mov edx, [edx + edx_offset]  ; Muss am Ende passieren, sonst Adresse weg
 
-    sti  ; Schalte Interrupts wieder ein
-    ret  ; Starte den folgenden Thread
+
+
+	; kickoff if first time or back to switch2next
+	sti  ; set all register right for the next thread. no other code will run hereafter other than the target thread because that would mess up the registers again.
+	ret
+
+
+
