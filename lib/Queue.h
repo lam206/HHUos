@@ -38,6 +38,7 @@ public:
     void enqueue (Chain* item);
     Chain* dequeue ();
     void remove (Chain*);
+    char is_empty();
  };
 
 #endif

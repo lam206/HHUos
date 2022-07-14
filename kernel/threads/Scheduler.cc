@@ -13,6 +13,43 @@
 #include "kernel/threads/IdleThread.h"
 #include "kernel/Globals.h"
 
+/*****************************************************************************
+ * Methode:         Scheduler::block                                         *
+ *---------------------------------------------------------------------------*
+ * Beschreibung:    Aufrufer ist blockiert. Es soll auf den naechsten Thread *
+ *                  umgeschaltet werden. Der Aufrufer soll nicht in die      *
+ *                  readyQueue eingefuegt werden und wird extern verwaltet.  *
+ *                  Wird bei uns nur fuer Semaphore verwendet. Jede Semaphore*
+ *                  hat eine Warteschlange wo der Thread dann verwaltet wird.*
+ *                  Die Methode kehrt nicht zurueck, sondern schaltet um.    *
+ *****************************************************************************/
+void Scheduler::block () {
+   
+   /* hier muss Code eingefuegt werden */
+	this->exit();
+   
+}
+
+
+/*****************************************************************************
+ * Methode:         Scheduler::deblock                                       *
+ *---------------------------------------------------------------------------*
+ * Beschreibung:    Thread 'that' deblockieren. 'that' wird nur in die       *
+ *                  readyQueue eingefuegt und dann zurueckgekehrt. In der    *
+ *                  einfachsten Form entspricht diese Funktion exakt 'ready' *
+ *                  Man koennte alternativ aber den deblockierten Thread auch*
+ *                  am Anfang der readyQueue einfuegen, um ihn zu beorzugen. *
+ *                                                                           *
+ * Parameter:       that:  Thread der deblockiert werden soll.               *
+ *****************************************************************************/
+void Scheduler::deblock (Thread &that) {
+	
+   /* hier muss Code eingefuegt werden */
+	this->ready(&that);
+
+}
+
+
 
 /*****************************************************************************
  * Methode:         Scheduler::Scheduler                                     *

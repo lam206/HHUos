@@ -33,9 +33,11 @@ int main() {
     // Interrupts erlauben (Tastatur)
     cpu.enable_int ();
 
-    Counter counter(0);
-    Counter counter2(10);
-    Counter counter3(20);
+    Semaphore s(1);
+
+    Counter counter(0, &s);
+    Counter counter2(10, &s);
+    Counter counter3(20, &s);
     Player player;
     IdleThread idle;
 

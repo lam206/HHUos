@@ -58,6 +58,10 @@ public:
     // Wird von Unterbrechungsroutine des PIT gerufen
     bool prepare_preemption ();
 
+    void block();
+
+    void deblock(Thread& that);
+
 };
 
 #endif

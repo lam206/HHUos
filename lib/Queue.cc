@@ -7,8 +7,7 @@ void Queue::enqueue (Chain* item) {  // don't need to check if empty or not
 	// take tail next pointer and set that to item
 	
 	if (item->next != 0) {
-		kout << "A Queue's enqueue is for adding one element. Not an element with a tail. ((next pointer not zero)." << endl;
-		item->next = 0;
+		item->next = 0;  // making sure tail of new element is zero (enqueue is for adding elements not concatenating Queues)
 	}
 	
 	*tail = item;	
@@ -57,4 +56,14 @@ void Queue::remove (Chain* item) {
 
 }
 
+
+char Queue::is_empty() {
+	if (this->head == 0) {
+		kout << "Queue is empty" << endl;
+		return 0; // Queue is empty
+	} else {
+		kout << "Queue is not empty" << endl;
+		return 1; // Queue is not empty
+	}
+}
 
