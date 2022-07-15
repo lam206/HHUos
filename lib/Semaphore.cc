@@ -7,6 +7,7 @@ void Semaphore::p() {
 		counter -= 1;
 		lock.release();
 	} else {
+		this->waitQueue.enqueue(scheduler.get_active());
 		lock.release();
 		scheduler.block();
 	}
@@ -15,14 +16,11 @@ void Semaphore::p() {
 void Semaphore::v() {
 	lock.acquire();
 	char isEmpty = this->waitQueue.is_empty();
-	kout << "isEmpty: " << isEmpty << endl;
 	if (isEmpty) {
 		this->counter += 1;
 	} else {
-		kout << "getting something from waitQuee" <<endl;
 		Thread* waiting = (Thread*)this->waitQueue.dequeue();
 		scheduler.deblock(*waiting);
 	}
-	kout << "after if-else" << endl;
 	lock.release();
 }

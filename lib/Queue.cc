@@ -59,11 +59,9 @@ void Queue::remove (Chain* item) {
 
 char Queue::is_empty() {
 	if (this->head == 0) {
-		kout << "Queue is empty" << endl;
-		return 0; // Queue is empty
+		return 1; // Queue is empty
 	} else {
-		kout << "Queue is not empty" << endl;
-		return 1; // Queue is not empty
+		return 0; // Queue is not empty
 	}
 }
 

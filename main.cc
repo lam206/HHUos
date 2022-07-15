@@ -25,6 +25,7 @@ int main() {
     allocator.init();
     
     // Startmeldung ausgeben
+    kout << hex << 16 << endl;
     kout << "HHUos" << endl << "=========" << endl << endl;
     // Tastatur-Unterbrechungsroutine einstoepseln
     kb.plugin ();
