@@ -25,7 +25,7 @@ void menu() {
 			break;
 		case '4':
 			heap_demo();
-
+			break;
 
 	}
 
