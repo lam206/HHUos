@@ -20,11 +20,8 @@
  * Beschreibung:    BumpAllokartor intitialisieren.                          *
  *****************************************************************************/
 void BumpAllocator::init() {
-
-     /* Hier muess Code eingefuegt werden */
+	
 	next = (unsigned char*)0x300000;
-
-
 
 }
 

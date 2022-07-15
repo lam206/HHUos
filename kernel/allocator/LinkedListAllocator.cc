@@ -55,14 +55,14 @@ void LinkedListAllocator::dump_free_memory() {
  * Beschreibung:    Einen neuen Speicherblock allozieren.                    * 
  *****************************************************************************/
 void * LinkedListAllocator::alloc(unsigned int req_size) {
+	// i take the size fields to be the size of the respective blocks in bytes, not the free or used space in the blocks
 	struct free_block* iter, *prev;
-	unsigned int block_size = req_size + 4 + (4 - (req_size % 4));
+	struct used_block *allocated_block;
 
-     /* Hier muess Code eingefuegt werden */
+	unsigned int block_size = req_size + 4 + (-req_size % 4);
+
 	// iterate over list
 	// until find free_block with desired size
-	//
-	//
 	
 	prev = 0;
 	iter = free_start;
@@ -75,30 +75,33 @@ void * LinkedListAllocator::alloc(unsigned int req_size) {
 	}
 
 	// found free space
-	if (iter->size < block_size + 4) {  // space too small to make sense to leave it free
+	if (iter->size <= block_size + 16) {  // if only 4 words or less extra, just take them.
+		block_size = iter->size; // allocated_block size just becomes the size of the free block
+		// remove free block from free list
 		if (prev == 0) {
 			free_start = iter->next;
 		} else {
 			prev->next = iter->next;
 		}
-		// size stays the same. whole free block used.
-	} else {
+	} else { 
+		// divide large free block into used block (to be returned) and smaller free block
 		struct free_block* new_free_block;
 		if (prev == 0) {
-			free_start += block_size;
-			new_free_block = free_start;
+			new_free_block = (struct free_block*)(((char*)free_start) + block_size);
+			free_start = new_free_block;
 		} else {
-			prev->next += block_size;
-			new_free_block = prev->next;
+
+			new_free_block = (struct free_block*)(((char*)prev->next) + block_size);
+			prev->next = new_free_block;
 		}
 		new_free_block->size = iter->size - block_size;
 		new_free_block->next = iter->next;
 
-		//size changes
-		iter->size = block_size;
 	}
+	allocated_block = (struct used_block*)iter;
+	allocated_block->size = block_size;
 	
-	return iter+4;
+	return &allocated_block->data;
 
 
 }

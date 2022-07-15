@@ -24,11 +24,27 @@ void waitForReturn() {
 
 void heap_demo() {
 
-	MyObj* datum = new MyObj(1, 1, 2000);
-	datum->tell_me_the_date();
+	MyObj* obj = new MyObj(1);
+	obj->tell_me_your_number();
 
-	int *arr = new int[9];
-	for (int i = 0; i < 10; i++) {
+	delete obj;
+
+	obj->tell_me_your_number(); // use-after-free
+
+	MyObj* obj2 = new MyObj(6);  // should be allocated to the same space where `datum` was before
+
+	obj->tell_me_your_number();  // second use-after-free. Should print obj2's number if obj's memory was reused properly
+
+
+
+	int *arr = new int[5];
+	for (int i = 0; i < 5; i++) {
 		arr[i] = i;
 	}
+
+	for (int i = 0; i < 5; i++) {
+		kout << arr[i] << endl;
+	}
+
+	delete arr;
 }
