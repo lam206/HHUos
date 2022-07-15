@@ -9,8 +9,8 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "user/CoopThreadDemo.h"
-#include "user/LoopThread.h"
+#include "user/threads/CoopThreadDemo.h"
+#include "user/threads/LoopThread.h"
 
 
 /*****************************************************************************

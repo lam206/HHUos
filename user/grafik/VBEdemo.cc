@@ -9,7 +9,7 @@
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "user/VBEdemo.h"
+#include "user/grafik/VBEdemo.h"
 #include "devices/fonts/Fonts.h"
 #include "lib/util.h"
 

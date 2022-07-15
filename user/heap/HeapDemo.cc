@@ -10,8 +10,8 @@
 
 #include "kernel/Globals.h"
 #include "kernel/Allocator.h"
-#include "user/HeapDemo.h"
-#include "user/MyObj.h"
+#include "user/heap/HeapDemo.h"
+#include "user/heap/MyObj.h"
 
 
 // Hilfsfunktion: Auf Return-Taste warten
@@ -24,18 +24,12 @@ void waitForReturn() {
 
 void heap_demo() {
 
-   /* hier muss Code eingefuegt werden */
 	MyObj* datum = new MyObj(1, 1, 2000);
 	datum->tell_me_the_date();
 
-	/* arrays not working
 	int arr[] = new int[9];
 	for (int i = 0; i < 10; i++) {
 		arr[i] = i;
 	}
-
-	kout.print(arr-10, 1000, kout.STD_ATTR);
-	*/
-
 
 }

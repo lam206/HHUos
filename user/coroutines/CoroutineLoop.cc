@@ -11,7 +11,7 @@
  * Autor:           Olaf Spinczyk, TU Dortmund                               *
  *****************************************************************************/
 
-#include "user/CoroutineLoop.h"
+#include "user/coroutines/CoroutineLoop.h"
 #include "kernel/Globals.h"
 
 

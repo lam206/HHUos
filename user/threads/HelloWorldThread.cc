@@ -1,32 +1,27 @@
 /*****************************************************************************
  *                                                                           *
- *                        L O O P T H R E A D                                *
+ *                   H E L L O W O R L D T H R E A D                         *
  *                                                                           *
  *---------------------------------------------------------------------------*
- * Beschreibung:    Demo eines Threads. Schleife die Zahlen ausgibt.         *
+ * Beschreibung:    Ein einfacher Thread.                                    *
+ *                                                                           *
+ * Autor:           Michael Schoettner, HHU, 21.8.2016                       *
  *****************************************************************************/
 
-#include "user/LoopThread.h"
 #include "kernel/Globals.h"
+#include "user/threads/HelloWorldThread.h"
+
 
 
 /*****************************************************************************
- * Methode:         LoopThread::run                                          *
+ * Methode:         HelloWorldThread::run                                    *
  *---------------------------------------------------------------------------*
- * Beschreibung:    Code des Threads.                                        *
+ * Beschreibung:    Einstiegsfunktion in unseren Thread.                     *
  *****************************************************************************/
-void LoopThread::run () {
-   
-   /* Hier muss Code eingefuegt werden */
-
-	int counter = 0;
-	while (1) {
-		kout.setpos(10+20*id, 10);
-		kout << "Thread" << id << ": " << counter;
-		kout.flush();
-		counter++;
-		scheduler.yield();
-	}
-
-   
+void HelloWorldThread::run () {
+    
+    kout << "Hallo Welt von einem Thread!" << endl;
+    
+    // selbst terminieren
+    scheduler.exit ();
 }

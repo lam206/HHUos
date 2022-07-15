@@ -1,29 +1,20 @@
 /*****************************************************************************
  *                                                                           *
- *                        K E Y B O A R D D E M O                            *
+ *                         S O U N D D E M O                                 *
  *                                                                           *
  *---------------------------------------------------------------------------*
- * Beschreibung:    Testausgaben für den CGA-Treiber.                        *
+ * Beschreibung:    Test für den PC-Lautsprecher-Treiber.                    *
  *                                                                           *
  * Autor:           Michael Schoettner, HHU, 26.10.2018                      *
  *****************************************************************************/
 
 #include "kernel/Globals.h"
-#include "user/KeyboardDemo.h"
 
-
-void keyboard_demo() {
-
-    /* Hier muess Code eingefuegt werden */
-	kout << endl << "Tastatur mit Eingaben bitte testen" << endl;
-
-    while (true) {
-        Key key;
-
-        if ((key = kb.key_hit()).valid()) {
-            kout << (char)key.ascii() << endl;
-        }
-    }
-
-
+void sound_demo() {
+   kout << "Test des PC-Lautsprechers: ";
+   kout << "playing tetris ..." << endl;
+   pcspk.tetris ();
+ 
+   kout << "playing aerodynamic ..." << endl;
+   pcspk.aerodynamic ();
 }
