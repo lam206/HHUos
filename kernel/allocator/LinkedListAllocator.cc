@@ -113,9 +113,14 @@ void * LinkedListAllocator::alloc(unsigned int req_size) {
  * Beschreibung:    Einen Speicherblock freigeben.                           *
  *****************************************************************************/
 void LinkedListAllocator::free(void *ptr) {
+	// free_start is made to point to block deallocated 
 
-     /* Hier muess Code eingefuegt werden */
-	struct free_block* new_free_block = (struct free_block*)ptr-4;
+	struct used_block* block_to_be_freed = (struct used_block*)(((char*)ptr)-4);
+	unsigned int block_size = block_to_be_freed->size;
+
+	struct free_block* new_free_block = (struct free_block*)block_to_be_freed;
+
+	new_free_block->size = block_size; // simply this since size is byte-size of whole block
 	new_free_block->next = free_start;
 	free_start = new_free_block;
 
