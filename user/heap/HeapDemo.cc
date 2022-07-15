@@ -27,9 +27,8 @@ void heap_demo() {
 	MyObj* datum = new MyObj(1, 1, 2000);
 	datum->tell_me_the_date();
 
-	int arr[] = new int[9];
+	int *arr = new int[9];
 	for (int i = 0; i < 10; i++) {
 		arr[i] = i;
 	}
-
 }
