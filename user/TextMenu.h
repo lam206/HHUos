@@ -6,6 +6,7 @@
 #include "user/keyboard/KeyIRQDemo.h"
 #include "user/preemptive/PreemptiveMultitaskingDemo.h"
 #include "user/grafik/GrafikDemo.h"
+#include "user/paging/PagingDemo.h"
 
 void menu() {
 	kout << "1. Textausgabe" << endl;
@@ -15,6 +16,7 @@ void menu() {
 	kout << "5. Tastatur (via interrupt)" << endl;
 	kout << "6. Preemptive multitasking, synchronised with Semaphores" << endl;
 	kout << "7. Grafikausgabe" << endl;
+	kout << "8. Paging. Writing to write protected page." << endl;
 
 	Keyboard k;
 	Key key = k.key_hit();
@@ -39,6 +41,10 @@ void menu() {
 			break;
 		case '7':
 			vbe_demo();
+			break;
+		case '8':
+			paging_demo();
+			break;
 
 
 	}
