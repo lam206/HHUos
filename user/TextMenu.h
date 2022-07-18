@@ -3,13 +3,16 @@
 #include "user/sound/SoundDemo.h"
 #include "user/keyboard/KeyboardDemo.h"
 #include "user/heap/HeapDemo.h"
+#include "user/keyboard/KeyIRQDemo.h"
+#include "user/preemptive/PreemptiveMultitaskingDemo.h"
 
 void menu() {
 	kout << "1. Textausgabe" << endl;
 	kout << "2. Sound" << endl;
 	kout << "3. Tastatur (polling)" << endl;
 	kout << "4. Heap" << endl;
-	kout << "4. Tastatur (via interrupt)" << endl;
+	kout << "5. Tastatur (via interrupt)" << endl;
+	kout << "6. Preemptive multitasking" << endl;
 
 	Keyboard k;
 	Key key = k.key_hit();
@@ -25,6 +28,12 @@ void menu() {
 			break;
 		case '4':
 			heap_demo();
+			break;
+		case '5':
+			key_irq_demo();
+			break;
+		case '6':
+			preemptive_multitasking_demo();
 			break;
 
 	}

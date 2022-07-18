@@ -14,6 +14,7 @@
 void key_irq_demo() {
 
    /* Hier muss Code eingefuegt werden */
-	kout << "type something" << endl;
+	kout << "what you type is handled via interrupts" << endl;
+	kb.plugin();
 
 }

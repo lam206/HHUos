@@ -9,6 +9,10 @@ class Counter : public Thread {
 		Semaphore *sem;
 
 	public:
+		Counter (int inpos) : Thread() {
+			this->pos = inpos;
+		}
+
 		Counter(int inpos, Semaphore *s) : Thread() {
 			this->pos = inpos;
 			this->sem = s;
