@@ -12,7 +12,8 @@ void menu() {
 	kout << "3. Tastatur (polling)" << endl;
 	kout << "4. Heap" << endl;
 	kout << "5. Tastatur (via interrupt)" << endl;
-	kout << "6. Preemptive multitasking" << endl;
+	kout << "6. Preemptive multitasking, synchronised with Semaphores" << endl;
+	kout << "7. Grafikausgabe" << endl;
 
 	Keyboard k;
 	Key key = k.key_hit();
@@ -35,6 +36,8 @@ void menu() {
 		case '6':
 			preemptive_multitasking_demo();
 			break;
+		case '7':
+
 
 	}
 
