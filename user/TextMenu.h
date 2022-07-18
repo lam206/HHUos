@@ -5,6 +5,7 @@
 #include "user/heap/HeapDemo.h"
 #include "user/keyboard/KeyIRQDemo.h"
 #include "user/preemptive/PreemptiveMultitaskingDemo.h"
+#include "user/grafik/GrafikDemo.h"
 
 void menu() {
 	kout << "1. Textausgabe" << endl;
@@ -37,6 +38,7 @@ void menu() {
 			preemptive_multitasking_demo();
 			break;
 		case '7':
+			vbe_demo();
 
 
 	}

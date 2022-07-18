@@ -105,8 +105,10 @@ void VBEdemo::run () {
 
     
     /* Hier muss Code eingefuegt werden */
-	vesa.drawRectangle(10, 10, 100, 100, vesa.palette(200, 200, 200));
-	vesa.drawCircle(50, 50, 20, vesa.palette(200, 200, 200));
+	vesa.drawRectangle(10, 200, 100, 100, vesa.palette(200, 200, 200));
+	vesa.drawCircle(50, 250, 20, vesa.palette(200, 200, 200));
+	drawBitmap();
+	drawFonts();
     // selbst terminieren
     scheduler.exit ();
 }
