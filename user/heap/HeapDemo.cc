@@ -16,35 +16,59 @@
 
 // Hilfsfunktion: Auf Return-Taste warten
 void waitForReturn() {
+	kout << endl;
 
+	kout << "Press enter" << endl;
+
+	Key k;
     /* hier muss Code eingefuegt werden */
+	while( !((k = kb.key_hit()).valid()) || k.ascii() != '\n') {
+
+	}
+
+	kout.clear();
 
 }
 
 
 void heap_demo() {
+	kout << hex;
+	verbose = 1;
 
+	kout.clear();
+	kout << "Demo 1/4: 2 objekte dynamisch allozieren" << endl;
+	allocator.dump_free_memory();
+	kout << "objekte anlegen" << endl;
 	MyObj* obj = new MyObj(1);
-	obj->tell_me_your_number();
+	MyObj* obj2 = new MyObj(6);
+	allocator.dump_free_memory();
+	waitForReturn();
 
+	kout.clear();
+	kout << "Demo 2/4: 2 objekte wieder freigeben" << endl;
 	delete obj;
+	delete obj2;
+	allocator.dump_free_memory();
+	waitForReturn();
 
-	obj->tell_me_your_number(); // use-after-free
-
-	MyObj* obj2 = new MyObj(6);  // should be allocated to the same space where `datum` was before
-
-	obj->tell_me_your_number();  // second use-after-free. Should print obj2's number if obj's memory was reused properly
-
-
-
-	int *arr = new int[5];
-	for (int i = 0; i < 5; i++) {
-		arr[i] = i;
+	kout.clear();
+	kout << "Demo 3/4: array mit drei objekten anlegen und inhalt eines objektes ausgeben" << endl;
+	kout << "Array anlegen" << endl;
+	MyObj* arr = new MyObj[3];
+	for (int i = 0; i < 3; i++) {
+		MyObj o = MyObj(i);
+		arr[i] = o;
 	}
+	kout << "1. objekt im array" << endl;
+	kout << "o[0]: number=" << arr[0].number << endl;
+	allocator.dump_free_memory();
+	waitForReturn();
 
-	for (int i = 0; i < 5; i++) {
-		kout << arr[i] << endl;
-	}
-
+	kout.clear();
+	kout << "array wieder freigeben" << endl;
+	kout << "Delete" << endl;
 	delete arr;
+	allocator.dump_free_memory();
+
+	kout << "Ende" << endl;
 }

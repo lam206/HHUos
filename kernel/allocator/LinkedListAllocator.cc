@@ -28,11 +28,9 @@
  *****************************************************************************/
 void LinkedListAllocator::init() {
 
-     /* Hier muess Code eingefuegt werden */
 	free_start = (struct free_block*)0x300000;
 	free_start->size = 0x100000;
 	free_start->next = 0;
-
 
 }
 
@@ -44,8 +42,18 @@ void LinkedListAllocator::init() {
  *****************************************************************************/
 void LinkedListAllocator::dump_free_memory() {
 
-     /* Hier muess Code eingefuegt werden */
+	kout << endl;
+	struct free_block *iter;
 
+	kout << "Freispeicherliste" << endl;
+	kout << " Heap-Start: " << heap_start << ", Heap-End: " << heap_end << endl;
+	kout << " Block-start: " << free_start << ", block-end: " << (struct free_block*)(((char*)free_start) + free_start->size) << ", block-groesse: " << free_start->size << endl;
+	iter = free_start;
+	while (iter->next != 0) {
+		iter = iter->next;
+		kout << " Block-start: " << iter << ", block-end: " << (void*)(((char*)iter) + iter->size) << ", block-groesse: " << iter->size << endl;
+	}
+	kout << endl;
 }
 
 
@@ -100,9 +108,12 @@ void * LinkedListAllocator::alloc(unsigned int req_size) {
 	}
 	allocated_block = (struct used_block*)iter;
 	allocated_block->size = block_size;
+
+	if (verbose) {
+		kout << "alloc: req_size=" << req_size << ", allocated=" << block_size << ", returning addr=" << &allocated_block->data << endl;
+	}
 	
 	return &allocated_block->data;
-
 
 }
 
@@ -117,6 +128,8 @@ void LinkedListAllocator::free(void *ptr) {
 
 	struct used_block* block_to_be_freed = (struct used_block*)(((char*)ptr)-4);
 	unsigned int block_size = block_to_be_freed->size;
+
+	kout << "free: prt=" << ptr << ", size=" << block_size << endl << endl;
 
 	struct free_block* new_free_block = (struct free_block*)block_to_be_freed;
 

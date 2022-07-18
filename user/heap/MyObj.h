@@ -2,10 +2,14 @@
 #include "kernel/Globals.h"
 
 class MyObj {
-	private:
-		int number;
 
 	public:
+		int number;
+
+		MyObj() {
+			number = 7;
+		}
+
 		MyObj(int num) {
 			number = num;
 		}

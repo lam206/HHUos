@@ -21,6 +21,7 @@ Scheduler        scheduler;     // Scheduler
 BIOS             bios;          // Schnittstelle zum 16-Bit BIOS
 //BumpAllocator       allocator;       
 LinkedListAllocator   allocator;       
+int verbose;
 unsigned int     total_mem;     // RAM total
 unsigned long    systime=0;     // wird all 10ms hochgezaehlt
 bool             forceSwitch=0; // gesetzt in Timer-Interrupt,

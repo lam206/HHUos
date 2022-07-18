@@ -35,6 +35,7 @@ extern Scheduler        scheduler;  // Scheduler
 extern BIOS             bios;       // Schnittstelle zum 16-Bit BIOS
 //extern BumpAllocator         allocator;       
 extern LinkedListAllocator   allocator;       
+extern int verbose; // 1 = print stuff, 0 = don't print stuff
 extern unsigned int     total_mem;  // RAM total
 extern unsigned long    systime;    // wird all 10ms hochgezaehlt
 extern bool             forceSwitch;// gesetzt in Timer-Interrupt,
