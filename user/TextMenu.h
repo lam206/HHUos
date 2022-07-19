@@ -20,6 +20,7 @@ void menu() {
 
 	Keyboard k;
 	Key key = k.key_hit();
+	kout.clear();
 	switch (key.ascii()) {
 		case '1':
 			text_demo();

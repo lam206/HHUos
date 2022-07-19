@@ -1,5 +1,22 @@
 #include "kernel/Globals.h"
 
+//
+// Hilfsfunktion: Auf Return-Taste warten
+void waitForReturn() {
+	kout << endl;
+
+	kout << "Press enter" << endl;
+
+	Key k;
+	while( !((k = kb.key_hit()).valid()) || k.ascii() != '\n') {
+
+	}
+
+	kout.clear();
+
+}
+
+
 int strlen(char* s) {
 	int n = 0;
 	while (*s != 0) {

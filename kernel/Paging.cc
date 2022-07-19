@@ -113,6 +113,9 @@ void pg_write_protect_page(unsigned int *p_page) {
 
 	*page_table_entry &= ~PAGE_WRITEABLE;
 
+	// flush entry from TLB so the fresh one is loaded later
+	invalidate_tlb_entry(p_page);
+
 }
 // p_page is a virtual memory address. The certain 10 bits tell me which page table entry this is.
 
@@ -126,6 +129,7 @@ void pg_notpresent_page(unsigned int *p_page) {
    /* hier muss Code eingefügt werden */
 	unsigned int* page_table_entry = get_page_table_entry(p_page);
 	*page_table_entry &= ~PAGE_PRESENT;
+	invalidate_tlb_entry(p_page);
 
 }
 

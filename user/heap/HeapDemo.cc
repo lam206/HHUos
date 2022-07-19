@@ -12,23 +12,7 @@
 #include "kernel/Allocator.h"
 #include "user/heap/HeapDemo.h"
 #include "user/heap/MyObj.h"
-
-
-// Hilfsfunktion: Auf Return-Taste warten
-void waitForReturn() {
-	kout << endl;
-
-	kout << "Press enter" << endl;
-
-	Key k;
-    /* hier muss Code eingefuegt werden */
-	while( !((k = kb.key_hit()).valid()) || k.ascii() != '\n') {
-
-	}
-
-	kout.clear();
-
-}
+#include "lib/util.h"
 
 
 void heap_demo() {

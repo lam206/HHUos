@@ -1,5 +1,7 @@
 #include "kernel/Globals.h"
 
+void waitForReturn();
+
 int strlen(char* s); 
 
 char* rev(char* s) ;
